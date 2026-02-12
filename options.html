@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="ui/options.css">
+  <title>Anonymizator — Options</title>
+</head>
+<body>
+  <div class="options-container">
+
+    <!-- Header -->
+    <header class="options-header">
+      <div class="options-title">
+        <span class="options-icon">🔒</span>
+        <h1>Anonymizator — Options</h1>
+        <span class="version-badge">v1.0.0</span>
+      </div>
+    </header>
+
+    <!-- Tab navigation -->
+    <nav class="tab-nav">
+      <button class="tab-btn active" data-tab="tab-correspondance">📋 Correspondance</button>
+      <button class="tab-btn" data-tab="tab-patterns">🔍 Patterns</button>
+      <button class="tab-btn" data-tab="tab-sites">🌐 Sites</button>
+      <button class="tab-btn" data-tab="tab-journal">📊 Journal RGPD</button>
+    </nav>
+
+    <!-- Tab 1: Correspondance -->
+    <section id="tab-correspondance" class="tab-panel active">
+      <div class="panel-header">
+        <h2 class="panel-title">Table de correspondance</h2>
+        <div class="panel-actions">
+          <input type="text" id="correspondence-search" class="input-search" placeholder="Rechercher un pseudonyme ou catégorie...">
+          <button class="btn btn-secondary" id="correspondence-export-csv">📥 Exporter CSV</button>
+        </div>
+      </div>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Pseudonyme</th>
+              <th>Catégorie</th>
+              <th>Art. RGPD</th>
+              <th>Première détection</th>
+              <th>Occurrences</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="correspondence-tbody">
+            <tr><td colspan="6" class="empty-cell">Aucune donnée</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Tab 2: Patterns -->
+    <section id="tab-patterns" class="tab-panel">
+      <div class="panel-header">
+        <h2 class="panel-title">Configuration des patterns</h2>
+        <p class="panel-description">Activez ou désactivez les patterns de détection par catégorie.</p>
+      </div>
+      <div id="patterns-container"></div>
+    </section>
+
+    <!-- Tab 3: Sites -->
+    <section id="tab-sites" class="tab-panel">
+      <div class="panel-header">
+        <h2 class="panel-title">Sites surveillés</h2>
+        <p class="panel-description">Gérez les domaines sur lesquels l'anonymisation est active.</p>
+      </div>
+      <div class="site-toggle-section">
+        <label class="toggle-switch">
+          <input type="checkbox" id="all-sites-toggle">
+          <span class="toggle-slider"></span>
+        </label>
+        <span class="site-toggle-label">Actif sur tous les sites</span>
+      </div>
+      <div class="site-add-section">
+        <input type="text" id="add-site-input" class="input-field" placeholder="exemple.com">
+        <button class="btn btn-secondary" id="add-site-btn">+ Ajouter</button>
+      </div>
+      <div id="sites-list" class="sites-list"></div>
+    </section>
+
+    <!-- Tab 4: Journal RGPD -->
+    <section id="tab-journal" class="tab-panel">
+      <div class="panel-header">
+        <h2 class="panel-title">Journal RGPD</h2>
+        <p class="panel-description">Registre des traitements d'anonymisation conformément au RGPD.</p>
+      </div>
+      <div class="journal-filters">
+        <div class="filter-row">
+          <div class="filter-group">
+            <label class="filter-label" for="journal-date-from">Du</label>
+            <input type="date" id="journal-date-from" class="input-field">
+          </div>
+          <div class="filter-group">
+            <label class="filter-label" for="journal-date-to">Au</label>
+            <input type="date" id="journal-date-to" class="input-field">
+          </div>
+          <div class="filter-group filter-group-grow">
+            <label class="filter-label" for="journal-site-filter">Site</label>
+            <input type="text" id="journal-site-filter" class="input-field" placeholder="Filtrer par URL...">
+          </div>
+          <button class="btn btn-secondary" id="journal-filter-btn">Filtrer</button>
+        </div>
+      </div>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>URL</th>
+              <th>Remplacements</th>
+              <th>Art. 4</th>
+              <th>Art. 9</th>
+              <th>Patterns</th>
+            </tr>
+          </thead>
+          <tbody id="journal-tbody">
+            <tr><td colspan="6" class="empty-cell">Aucune entrée</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="journal-actions">
+        <button class="btn btn-secondary" id="journal-export-csv">📥 Exporter CSV</button>
+        <button class="btn btn-secondary" id="journal-export-json">📥 Exporter JSON</button>
+        <button class="btn btn-danger" id="journal-purge">🗑️ Purger le journal</button>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="options-footer">
+      Anonymizator v1.0.0 · <a href="https://lawgitech.eu" target="_blank" rel="noopener">lawgitech.eu</a>
+    </footer>
+
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>
