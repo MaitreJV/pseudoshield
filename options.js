@@ -86,6 +86,8 @@
       { id: 'CB', label: 'Carte bancaire', category: 'financier', rgpdCategory: 'art4', confidence: 'high' },
       { id: 'NOM_CIVILITE', label: 'Nom propre (civilité)', category: 'identite', rgpdCategory: 'art4', confidence: 'medium' },
       { id: 'NOM_CONTEXTE', label: 'Nom propre (contexte)', category: 'identite', rgpdCategory: 'art4', confidence: 'medium' },
+      { id: 'NOM_MULTICONTEXTE', label: 'Nom propre (multi-mots)', category: 'identite', rgpdCategory: 'art4', confidence: 'medium' },
+      { id: 'NOM_CONSECUTIF', label: 'Nom propre (heuristique)', category: 'identite', rgpdCategory: 'art4', confidence: 'low' },
       { id: 'SECU_FR', label: 'Sécurité sociale FR', category: 'identite', rgpdCategory: 'art9', confidence: 'high' }
     ];
 

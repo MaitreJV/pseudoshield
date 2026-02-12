@@ -68,6 +68,8 @@
 
   const PATTERNS_EU = [
     // 1. Registre national belge (NISS)
+    // softValidation : si le modulo 97 échoue, on garde le match en 'medium'
+    // plutôt que de l'ignorer — mieux vaut un faux positif qu'un faux négatif
     {
       id: 'NISS_BE',
       label: 'Registre national belge',
@@ -76,6 +78,7 @@
       confidence: 'high',
       regex: /\b(\d{2})[.\s]?(\d{2})[.\s]?(\d{2})[.\s-]?(\d{3})[.\s]?(\d{2})\b/g,
       validator: validateNISS,
+      softValidation: true,
       pseudonymPrefix: 'NISS',
       enabled: true
     },

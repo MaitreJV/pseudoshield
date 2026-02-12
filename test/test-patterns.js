@@ -27,11 +27,16 @@
     const detect = window.Anonymizator.Detector.detect;
 
     // === NISS Tests ===
+    // Soft validation : NISS fictif (checksum invalide) détecté avec confidence 'medium'
     let matches = detect('numéro 85.03.15-123.45 ici');
-    assert('NISS: détection format standard', matches.some(m => m.patternId === 'NISS_BE'), 'Should detect 85.03.15-123.45');
+    assert('NISS: détection format standard (soft)', matches.some(m => m.patternId === 'NISS_BE'), 'Should detect 85.03.15-123.45 via soft validation');
 
-    matches = detect('NISS invalide 99.99.99-999.99');
-    assert('NISS: rejet invalide', !matches.some(m => m.patternId === 'NISS_BE'), 'Should reject invalid NISS');
+    let nissMatch = matches.find(m => m.patternId === 'NISS_BE');
+    assert('NISS: soft validation → confidence medium', nissMatch && nissMatch.confidence === 'medium', 'Fictive NISS should have medium confidence, got: ' + (nissMatch ? nissMatch.confidence : 'none'));
+
+    // Format invalide (trop court, pas de match regex)
+    matches = detect('NISS invalide 99.99.99');
+    assert('NISS: rejet format trop court', !matches.some(m => m.patternId === 'NISS_BE'), 'Should reject too-short format');
 
     // === IBAN Tests ===
     matches = detect('compte BE68 5390 0754 7034');
@@ -74,6 +79,28 @@
     matches = detect('Patient : Pierre Lemaire');
     assert('Nom contexte: détection Patient', matches.some(m => m.patternId === 'NOM_CONTEXTE'), 'Should detect name after context');
 
+    // Nouveaux contextes ajoutés
+    matches = detect('le soussigné Jean-Pierre Dupont');
+    assert('Nom contexte: soussigné', matches.some(m => m.patternId === 'NOM_CONTEXTE'), 'Should detect name after soussigné');
+
+    matches = detect('Cher Marc Janssens');
+    assert('Nom contexte: Cher', matches.some(m => m.patternId === 'NOM_CONTEXTE'), 'Should detect name after Cher');
+
+    // NOM_MULTICONTEXTE : représenté par, ci-après dénommé
+    matches = detect('représenté par Sophie Lambert');
+    assert('Nom multi-contexte: représenté par', matches.some(m => m.patternId === 'NOM_MULTICONTEXTE'), 'Should detect name after représenté par');
+
+    matches = detect('ci-après dénommé Paul Vermeer');
+    assert('Nom multi-contexte: ci-après dénommé', matches.some(m => m.patternId === 'NOM_MULTICONTEXTE'), 'Should detect name after ci-après dénommé');
+
+    // NOM_CONSECUTIF : deux mots capitalisés consécutifs (heuristique)
+    matches = detect('contrat signé par Jean Dupont en date');
+    assert('Nom consécutif: heuristique', matches.some(m => m.patternId === 'NOM_CONSECUTIF'), 'Should detect consecutive capitalized words after lowercase');
+
+    // Particules belges/françaises
+    matches = detect('Mme Van den Berg est convoquée');
+    assert('Nom civilité: particule Van den', matches.some(m => m.patternId === 'NOM_CIVILITE'), 'Should detect name with particule');
+
     // === False Positives ===
     matches = detect('Le RGPD est un règlement européen entré en vigueur le 25 mai 2018.');
     assert('Faux positifs: texte générique', matches.length === 0, 'Should not detect anything in generic text');
@@ -82,9 +109,9 @@
     assert('Faux positifs: salutation', matches.length === 0, 'Should not detect anything in greeting');
 
     // === Validator Tests ===
-    const { validateNISS, validateIBAN, validateLuhn } = window.Anonymizator.Validators;
+    const { validateNISS, validateIBAN, validateLuhn, validateSecuFR } = window.Anonymizator.Validators;
 
-    assert('Validator NISS: format valide', validateNISS('85.03.15-123.45'), 'Should validate correct NISS');
+    assert('Validator NISS: format fictif rejeté', !validateNISS('85.03.15-123.45'), 'Fictive NISS should fail modulo 97 validation');
     assert('Validator IBAN: BE valide', validateIBAN('BE68539007547034'), 'Should validate correct IBAN');
     assert('Validator Luhn: carte valide', validateLuhn('4532015112830366'), 'Should validate correct card');
     assert('Validator Luhn: carte invalide', !validateLuhn('1234567890123456'), 'Should reject invalid card');

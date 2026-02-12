@@ -63,11 +63,14 @@
     }
   }
 
-  // Civilités pour la détection de noms propres
-  const CIVILITES = '(?:M\\.|Mme|Mlle|Maître|Maitre|Me|Mr|Mrs|Ms|Dr|Pr|Prof)';
+  // Civilités pour la détection de noms propres (avec point optionnel pour Dr./Pr./Prof.)
+  const CIVILITES = '(?:M\\.|Mme|Mlle|Maître|Maitre|Me|Mr\\.?|Mrs\\.?|Ms\\.?|Dr\\.?|Pr\\.?|Prof\\.?)';
 
-  // Contextes précédant un nom
-  const CONTEXTES_NOM = '(?:Nom|Prénom|Prenom|Client|Partie|Requérant|Requerant|Défendeur|Defendeur|Demandeur|Plaignant|Intimé|Intime|Appelant|Signataire|Représenté|Represente|Bénéficiaire|Beneficiaire|Destinataire|Expéditeur|Expediteur|Patient|Médecin|Medecin|Avocat|Notaire|Juge)';
+  // Contextes simples précédant un nom (un seul mot)
+  const CONTEXTES_NOM = '(?:Nom|Prénom|Prenom|Client|Partie|Requérant|Requerant|Défendeur|Defendeur|Demandeur|Plaignant|Intimé|Intime|Appelant|Signataire|Représenté|Represente|Bénéficiaire|Beneficiaire|Destinataire|Expéditeur|Expediteur|Patient|Médecin|Medecin|Avocat|Notaire|Juge|soussigné|soussignée|soussigne|dénommé|dénommée|denomme|Cher|Chère|Chere)';
+
+  // Contextes multi-mots précédant un nom
+  const CONTEXTES_MULTI = '(?:représenté(?:e)?\\s+par|represente(?:e)?\\s+par|ci-après(?:\\s+(?:dénommé|dénommée|denomme))?|ci-apres(?:\\s+(?:denomme))?)';
 
   // Particules de noms belges/français/néerlandais
   const PARTICULES = "(?:Van\\s+den|Van\\s+de|Van\\s+der|Van't|Van|Den|De\\s+la|De\\s+le|Du|De|Le|La|D')";
@@ -206,7 +209,39 @@
       enabled: true
     },
 
-    // 12. Numéro de sécurité sociale français
+    // 12. Noms propres après contexte multi-mots (représenté par, ci-après dénommé)
+    {
+      id: 'NOM_MULTICONTEXTE',
+      label: 'Nom propre (contexte multi-mots)',
+      category: 'identite',
+      rgpdCategory: 'art4',
+      confidence: 'medium',
+      regex: new RegExp(CONTEXTES_MULTI + '\\s+(?:' + PARTICULES + '\\s+)?([A-ZÀ-Ÿ][a-zà-ÿ]+(?:[\\s\\-][A-ZÀ-Ÿ][a-zà-ÿ]+)*)', 'g'),
+      pseudonymPrefix: 'Personne',
+      enabled: true
+    },
+
+    // 13. Noms propres heuristiques : Prénom Nom consécutifs, pas en début de phrase
+    // Lookbehind : précédé d'un saut de ligne, ponctuation, ou fin de mot en minuscule
+    {
+      id: 'NOM_CONSECUTIF',
+      label: 'Nom propre (heuristique)',
+      category: 'identite',
+      rgpdCategory: 'art4',
+      confidence: 'low',
+      regex: new RegExp(
+        '(?<=[\\n,;:(]\\s*|[a-zà-ÿ]\\s)' +
+        '[A-ZÀ-Ÿ][a-zà-ÿ]{2,}(?:-[A-ZÀ-Ÿ][a-zà-ÿ]+)?' +
+        '\\s+' +
+        '(?:' + PARTICULES + '\\s+)?' +
+        '[A-ZÀ-Ÿ][a-zà-ÿ]{2,}',
+        'g'
+      ),
+      pseudonymPrefix: 'Personne',
+      enabled: true
+    },
+
+    // 14. Numéro de sécurité sociale français
     {
       id: 'SECU_FR',
       label: 'Sécurité sociale française',

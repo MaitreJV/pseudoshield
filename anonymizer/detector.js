@@ -37,8 +37,14 @@
         const matchText = match[0];
 
         // Appliquer le validateur si défini
+        let confidence = pattern.confidence;
         if (pattern.validator && !pattern.validator(matchText)) {
-          continue;
+          if (pattern.softValidation) {
+            // Validation souple : garder le match mais réduire la confiance
+            confidence = 'medium';
+          } else {
+            continue;
+          }
         }
 
         detections.push({
@@ -48,7 +54,7 @@
           end: match.index + matchText.length,
           category: pattern.category,
           rgpdCategory: pattern.rgpdCategory,
-          confidence: pattern.confidence,
+          confidence,
           pseudonymPrefix: pattern.pseudonymPrefix
         });
       }
