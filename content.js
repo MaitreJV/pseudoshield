@@ -32,13 +32,25 @@
   }
 
   async function handlePaste(event) {
-    isEnabled = await checkEnabled();
-    if (!isEnabled) return;
-
+    // Extraire le texte AVANT tout await (synchrone)
     const text = window.Anonymizator.Clipboard.getTextFromPasteEvent(event);
     if (!text || text.trim().length === 0) return;
 
+    // preventDefault SYNCHRONE pour bloquer le collage par défaut du navigateur
+    // Sinon le texte original est inséré avant que le traitement async ne termine
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
     const adapter = window.Anonymizator.SiteAdapters.getAdapter();
+    const target = event.target || window.Anonymizator.SiteAdapters.findTarget(adapter);
+
+    // Vérifier si l'extension est active (async)
+    isEnabled = await checkEnabled();
+    if (!isEnabled) {
+      // Réinsérer le texte original puisqu'on a bloqué le paste
+      if (target) window.Anonymizator.SiteAdapters.insertText(target, text, adapter);
+      return;
+    }
 
     try {
       // Charger les patterns désactivés depuis la config
@@ -52,12 +64,11 @@
 
       const result = await window.Anonymizator.Processor.process(text, { enabledPatterns });
 
-      if (result.replacementsCount === 0) return;
-
-      event.preventDefault();
-      event.stopImmediatePropagation();
-
-      const target = event.target || window.Anonymizator.SiteAdapters.findTarget(adapter);
+      if (result.replacementsCount === 0) {
+        // Aucune détection : réinsérer le texte original
+        if (target) window.Anonymizator.SiteAdapters.insertText(target, text, adapter);
+        return;
+      }
 
       if (target) {
         window.Anonymizator.SiteAdapters.insertText(target, result.anonymizedText, adapter);
@@ -82,6 +93,8 @@
 
     } catch (e) {
       console.error('[Anonymizator] Erreur traitement:', e);
+      // En cas d'erreur, réinsérer le texte original
+      if (target) window.Anonymizator.SiteAdapters.insertText(target, text, adapter);
     }
   }
 
