@@ -8,14 +8,14 @@
   const SITE_ADAPTERS = {
     'claude.ai': {
       name: 'Claude',
-      selector: 'div[contenteditable="true"].ProseMirror, div[contenteditable="true"]',
-      insertMethod: 'inputEvent',
+      selector: 'div.ProseMirror[contenteditable="true"], div[contenteditable="true"]',
+      insertMethod: 'syntheticPaste',
       detect: () => location.hostname === 'claude.ai'
     },
     'chatgpt.com': {
       name: 'ChatGPT',
       selector: '#prompt-textarea, div[contenteditable="true"][id="prompt-textarea"]',
-      insertMethod: 'inputEvent',
+      insertMethod: 'syntheticPaste',
       detect: () => location.hostname === 'chatgpt.com'
     },
     'gemini.google.com': {
@@ -64,6 +64,8 @@
 
     try {
       switch (adapter.insertMethod) {
+        case 'syntheticPaste':
+          return insertViaSyntheticPaste(element, text);
         case 'inputEvent':
           return insertViaInputEvent(element, text);
         case 'nativeValue':
@@ -76,6 +78,51 @@
     } catch (e) {
       console.warn('[Anonymizator] Méthode', adapter.insertMethod, 'échouée, fallback execCommand:', e);
       return insertViaExecCommand(element, text);
+    }
+  }
+
+  /**
+   * Insertion via paste synthétique — pour éditeurs ProseMirror (Claude.ai, ChatGPT)
+   * Crée un vrai ClipboardEvent avec DataTransfer pour que ProseMirror
+   * le traite via son propre pipeline de paste, garantissant une insertion correcte.
+   * Le flag _syntheticPaste empêche content.js de ré-intercepter cet événement.
+   */
+  function insertViaSyntheticPaste(element, text) {
+    element.focus();
+
+    // Placer le curseur à la fin si pas de sélection active
+    if (element.contentEditable === 'true') {
+      const selection = window.getSelection();
+      if (!selection.rangeCount || !element.contains(selection.anchorNode)) {
+        const range = document.createRange();
+        range.selectNodeContents(element);
+        range.collapse(false);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+    }
+
+    // Marquer comme synthétique pour que handlePaste l'ignore
+    window.Anonymizator._syntheticPaste = true;
+
+    try {
+      const dataTransfer = new DataTransfer();
+      dataTransfer.setData('text/plain', text);
+
+      const pasteEvent = new ClipboardEvent('paste', {
+        clipboardData: dataTransfer,
+        bubbles: true,
+        cancelable: true
+      });
+
+      element.dispatchEvent(pasteEvent);
+      console.log('[Anonymizator] Synthetic paste dispatché sur', element.tagName + (element.className ? '.' + element.className.split(' ')[0] : ''));
+      return true;
+    } catch (e) {
+      console.warn('[Anonymizator] Synthetic paste échoué, fallback inputEvent:', e);
+      return insertViaInputEvent(element, text);
+    } finally {
+      window.Anonymizator._syntheticPaste = false;
     }
   }
 

@@ -32,6 +32,10 @@
   }
 
   async function handlePaste(event) {
+    // Ignorer les paste synthétiques émis par insertViaSyntheticPaste
+    // pour éviter une boucle infinie (notre handler intercepte notre propre paste)
+    if (window.Anonymizator._syntheticPaste) return;
+
     // Extraire le texte AVANT tout await (synchrone)
     const text = window.Anonymizator.Clipboard.getTextFromPasteEvent(event);
     if (!text || text.trim().length === 0) return;
