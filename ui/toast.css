@@ -1,0 +1,70 @@
+/* ui/toast.css */
+.anonymizator-toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #1a1a2e;
+  color: #ffffff;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+  z-index: 2147483647;
+  max-width: 320px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  cursor: pointer;
+  border-left: 3px solid #00b894;
+}
+
+.anonymizator-toast-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.anonymizator-toast-hiding {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.anonymizator-toast-header {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.anonymizator-toast-check {
+  color: #00b894;
+}
+
+.anonymizator-toast-details {
+  font-size: 11px;
+  color: #b0b0b0;
+  margin-bottom: 4px;
+}
+
+.anonymizator-toast-rgpd {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.anonymizator-toast-art4 {
+  background: #00b894;
+  color: #ffffff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.anonymizator-toast-art9 {
+  background: #e74c3c;
+  color: #ffffff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+}
