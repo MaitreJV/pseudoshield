@@ -103,7 +103,7 @@
       category: 'financier',
       rgpdCategory: 'art4',
       confidence: 'high',
-      regex: /\bFR\d{2}[\s.\-]?\d{4}[\s.\-]?\d{4}[\s.\-]?\d{4}[\s.\-]?\d{4}[\s.\-]?\d{3}\b/gi,
+      regex: /\bFR\d{2}[\s.\-]?\d{4}[\s.\-]?\d{4}[\s.\-]?\d{4}[\s.\-]?\d{4}[\s.\-]?\d{4}[\s.\-]?\d{3}\b/gi,
       validator: validateIBAN,
       pseudonymPrefix: 'IBAN',
       enabled: true
