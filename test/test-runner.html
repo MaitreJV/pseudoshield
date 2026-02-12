@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anonymizator — Test Runner</title>
+  <style>
+    /* ============================
+       Base & Reset
+       ============================ */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #1a1a2e;
+      color: #e0e0e0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ============================
+       Layout
+       ============================ */
+    .app-header {
+      background: #16213e;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .app-title {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .app-title .lock-icon {
+      font-size: 22px;
+    }
+
+    .app-subtitle {
+      font-size: 12px;
+      color: #888;
+      font-weight: 400;
+    }
+
+    .main-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px 24px;
+    }
+
+    /* ============================
+       Toolbar
+       ============================ */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+      padding: 14px 16px;
+      background: #16213e;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .toolbar-group {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .toolbar-separator {
+      width: 1px;
+      height: 28px;
+      background: rgba(255, 255, 255, 0.12);
+      margin: 0 8px;
+    }
+
+    .toolbar-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #888;
+      margin-right: 4px;
+    }
+
+    /* ============================
+       Buttons
+       ============================ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+      white-space: nowrap;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn-default {
+      background: rgba(255, 255, 255, 0.06);
+      color: #e0e0e0;
+    }
+
+    .btn-default:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-primary {
+      background: rgba(0, 184, 148, 0.15);
+      color: #00b894;
+      border-color: rgba(0, 184, 148, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: rgba(0, 184, 148, 0.25);
+    }
+
+    .btn-test {
+      background: rgba(108, 92, 231, 0.15);
+      color: #a29bfe;
+      border-color: rgba(108, 92, 231, 0.3);
+    }
+
+    .btn-test:hover {
+      background: rgba(108, 92, 231, 0.25);
+    }
+
+    .btn-reset {
+      background: rgba(231, 76, 60, 0.10);
+      color: #e74c3c;
+      border-color: rgba(231, 76, 60, 0.25);
+    }
+
+    .btn-reset:hover {
+      background: rgba(231, 76, 60, 0.20);
+    }
+
+    /* ============================
+       Split View
+       ============================ */
+    .split-view {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .pane {
+      background: #16213e;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pane-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(0, 0, 0, 0.15);
+    }
+
+    .pane-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #aaa;
+    }
+
+    .pane-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .pane-badge-art4 {
+      background: rgba(0, 184, 148, 0.15);
+      color: #00b894;
+    }
+
+    .pane-badge-art9 {
+      background: rgba(231, 76, 60, 0.15);
+      color: #e74c3c;
+    }
+
+    .pane-content {
+      padding: 14px;
+      min-height: 300px;
+      max-height: 500px;
+      overflow-y: auto;
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .pane-content.placeholder {
+      color: rgba(255, 255, 255, 0.25);
+      font-style: italic;
+      font-family: 'Inter', system-ui, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    /* Highlight spans in anonymized text */
+    .highlight-art4 {
+      background: rgba(0, 184, 148, 0.20);
+      color: #00b894;
+      border: 1px solid rgba(0, 184, 148, 0.35);
+      border-radius: 3px;
+      padding: 1px 4px;
+      font-weight: 600;
+    }
+
+    .highlight-art9 {
+      background: rgba(231, 76, 60, 0.20);
+      color: #e74c3c;
+      border: 1px solid rgba(231, 76, 60, 0.35);
+      border-radius: 3px;
+      padding: 1px 4px;
+      font-weight: 600;
+    }
+
+    /* ============================
+       Stats Bar
+       ============================ */
+    .stats-bar {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      padding: 14px 16px;
+      background: #16213e;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #888;
+    }
+
+    .stat-value {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .stat-value.art4 { color: #00b894; }
+    .stat-value.art9 { color: #e74c3c; }
+    .stat-value.time { color: #fdcb6e; }
+
+    /* ============================
+       Correspondence Table
+       ============================ */
+    .table-section {
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #aaa;
+      margin-bottom: 10px;
+      padding-left: 4px;
+    }
+
+    .corr-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #16213e;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .corr-table thead th {
+      background: rgba(0, 0, 0, 0.2);
+      padding: 10px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #aaa;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .corr-table tbody td {
+      padding: 8px 14px;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+
+    .corr-table tbody tr:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .corr-table .td-pseudonym {
+      font-weight: 700;
+      color: #a29bfe;
+    }
+
+    .corr-table .td-original {
+      color: #fdcb6e;
+    }
+
+    .corr-table .td-category {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .corr-table .td-rgpd-art4 {
+      color: #00b894;
+    }
+
+    .corr-table .td-rgpd-art9 {
+      color: #e74c3c;
+    }
+
+    .corr-empty {
+      padding: 20px;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.25);
+      font-style: italic;
+    }
+
+    /* ============================
+       Test Results Panel
+       ============================ */
+    .test-panel {
+      margin-bottom: 20px;
+      background: #16213e;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      overflow: hidden;
+      display: none;
+    }
+
+    .test-panel.visible {
+      display: block;
+    }
+
+    .test-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: rgba(0, 0, 0, 0.15);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .test-panel-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #a29bfe;
+    }
+
+    .test-summary {
+      display: flex;
+      gap: 12px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .test-summary .pass { color: #00b894; }
+    .test-summary .fail { color: #e74c3c; }
+
+    .test-results-list {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .test-result-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 16px;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .test-result-item:last-child {
+      border-bottom: none;
+    }
+
+    .test-status {
+      font-weight: 800;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 3px;
+      min-width: 44px;
+      text-align: center;
+    }
+
+    .test-status-pass {
+      background: rgba(0, 184, 148, 0.15);
+      color: #00b894;
+    }
+
+    .test-status-fail {
+      background: rgba(231, 76, 60, 0.15);
+      color: #e74c3c;
+    }
+
+    .test-name {
+      font-weight: 600;
+      flex: 1;
+    }
+
+    .test-details {
+      font-size: 11px;
+      color: #888;
+      max-width: 300px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* ============================
+       Scrollbar
+       ============================ */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    /* ============================
+       Responsive
+       ============================ */
+    @media (max-width: 900px) {
+      .split-view {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ============================
+       Loading spinner
+       ============================ */
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-top-color: #00b894;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="app-header">
+    <div class="app-title">
+      <span class="lock-icon">&#x1F512;</span>
+      <span>Anonymizator <span class="app-subtitle">Test Runner</span></span>
+    </div>
+    <div style="font-size: 11px; color: #555;">v1.0.0 &middot; lawgitech.eu</div>
+  </div>
+
+  <div class="main-container">
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <span class="toolbar-label">Charger un texte :</span>
+      <div class="toolbar-group">
+        <button class="btn btn-default" onclick="loadText('juridiqueBelge')">Juridique BE</button>
+        <button class="btn btn-default" onclick="loadText('emailProfessionnel')">Email pro</button>
+        <button class="btn btn-default" onclick="loadText('medical')">Medical (art.9)</button>
+        <button class="btn btn-default" onclick="loadText('contratCommercial')">Contrat</button>
+        <button class="btn btn-default" onclick="loadText('sansDonn')">Sans donnees</button>
+      </div>
+
+      <div class="toolbar-separator"></div>
+
+      <div class="toolbar-group">
+        <button class="btn btn-primary" id="btn-anonymize" onclick="runAnonymize()">Anonymiser</button>
+        <button class="btn btn-test" id="btn-run-tests" onclick="runPatternTests()">Run Pattern Tests</button>
+        <button class="btn btn-reset" onclick="resetAll()">Reset</button>
+      </div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar" id="stats-bar" style="display: none;">
+      <div class="stat-item">
+        <span class="stat-label">Detections :</span>
+        <span class="stat-value" id="stat-total">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Art. 4 :</span>
+        <span class="stat-value art4" id="stat-art4">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Art. 9 :</span>
+        <span class="stat-value art9" id="stat-art9">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Temps :</span>
+        <span class="stat-value time" id="stat-time">0 ms</span>
+      </div>
+    </div>
+
+    <!-- Split View -->
+    <div class="split-view">
+      <div class="pane">
+        <div class="pane-header">
+          <span class="pane-title">Texte original</span>
+        </div>
+        <div class="pane-content placeholder" id="pane-original">
+          Selectionnez un texte de test dans la barre d'outils ci-dessus.
+        </div>
+      </div>
+
+      <div class="pane">
+        <div class="pane-header">
+          <span class="pane-title">Texte anonymise</span>
+          <div>
+            <span class="pane-badge pane-badge-art4" id="badge-art4" style="display: none;">art.4</span>
+            <span class="pane-badge pane-badge-art9" id="badge-art9" style="display: none;">art.9</span>
+          </div>
+        </div>
+        <div class="pane-content placeholder" id="pane-anonymized">
+          Cliquez sur "Anonymiser" apres avoir charge un texte.
+        </div>
+      </div>
+    </div>
+
+    <!-- Test Results Panel -->
+    <div class="test-panel" id="test-panel">
+      <div class="test-panel-header">
+        <span class="test-panel-title">Resultats des tests</span>
+        <div class="test-summary" id="test-summary"></div>
+      </div>
+      <div class="test-results-list" id="test-results-list"></div>
+    </div>
+
+    <!-- Correspondence Table -->
+    <div class="table-section" id="table-section" style="display: none;">
+      <div class="section-title">Table de correspondance</div>
+      <table class="corr-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Pseudonyme</th>
+            <th>Original</th>
+            <th>Pattern</th>
+            <th>Categorie</th>
+            <th>RGPD</th>
+            <th>Confiance</th>
+          </tr>
+        </thead>
+        <tbody id="corr-tbody">
+          <tr><td colspan="7" class="corr-empty">Aucune correspondance. Lancez une anonymisation.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- ============================
+       Mock Chrome APIs
+       ============================ -->
+  <script>
+    // Mock chrome APIs for standalone testing
+    window.chrome = {
+      storage: {
+        local: {
+          _data: {},
+          get: function(keys) {
+            return new Promise(resolve => {
+              const result = {};
+              const keyList = Array.isArray(keys) ? keys : [keys];
+              keyList.forEach(k => { if (this._data[k] !== undefined) result[k] = this._data[k]; });
+              resolve(result);
+            });
+          },
+          set: function(items) {
+            return new Promise(resolve => {
+              Object.assign(this._data, items);
+              resolve();
+            });
+          },
+          remove: function(keys) {
+            return new Promise(resolve => {
+              const keyList = Array.isArray(keys) ? keys : [keys];
+              keyList.forEach(k => delete this._data[k]);
+              resolve();
+            });
+          }
+        }
+      },
+      runtime: {
+        sendMessage: function() { return Promise.resolve({}); },
+        onMessage: { addListener: function() {} }
+      }
+    };
+  </script>
+
+  <!-- ============================
+       Load Anonymizer Modules
+       ============================ -->
+  <script src="../utils/hash.js"></script>
+  <script src="../anonymizer/patterns-eu.js"></script>
+  <script src="../anonymizer/patterns-generic.js"></script>
+  <script src="../anonymizer/detector.js"></script>
+  <script src="../anonymizer/pseudonym-engine.js"></script>
+  <script src="../anonymizer/processor.js"></script>
+  <script src="../anonymizer/rgpd-logger.js"></script>
+
+  <!-- ============================
+       Load Test Modules
+       ============================ -->
+  <script src="test-data.js"></script>
+  <script src="test-patterns.js"></script>
+
+  <!-- ============================
+       Test Runner Logic
+       ============================ -->
+  <script>
+    // Etat global
+    let currentText = '';
+    let lastResult = null;
+
+    /**
+     * Charge un texte de test dans le panneau original
+     */
+    function loadText(key) {
+      const data = window.Anonymizator.TestData[key];
+      if (!data) {
+        console.error('[TestRunner] Texte introuvable:', key);
+        return;
+      }
+
+      currentText = data;
+      const paneOriginal = document.getElementById('pane-original');
+      paneOriginal.classList.remove('placeholder');
+      paneOriginal.textContent = data;
+
+      // Reinitialiser le panneau anonymise
+      const paneAnonymized = document.getElementById('pane-anonymized');
+      paneAnonymized.classList.add('placeholder');
+      paneAnonymized.innerHTML = 'Cliquez sur "Anonymiser" pour traiter ce texte.';
+
+      // Masquer les stats et la table
+      document.getElementById('stats-bar').style.display = 'none';
+      document.getElementById('table-section').style.display = 'none';
+      document.getElementById('badge-art4').style.display = 'none';
+      document.getElementById('badge-art9').style.display = 'none';
+
+      lastResult = null;
+    }
+
+    /**
+     * Lance l'anonymisation du texte charge
+     */
+    async function runAnonymize() {
+      if (!currentText) {
+        alert('Veuillez d\'abord charger un texte de test.');
+        return;
+      }
+
+      const btn = document.getElementById('btn-anonymize');
+      btn.innerHTML = '<span class="spinner"></span> Traitement...';
+      btn.disabled = true;
+
+      try {
+        // Reinitialiser le moteur pour un test propre
+        await window.Anonymizator.PseudonymEngine.reset();
+
+        // Lancer le traitement
+        const result = await window.Anonymizator.Processor.process(currentText);
+        lastResult = result;
+
+        // Afficher le texte anonymise avec colorisation
+        renderAnonymizedText(result);
+
+        // Mettre a jour les stats
+        renderStats(result);
+
+        // Mettre a jour la table de correspondance
+        renderCorrespondenceTable(result);
+
+      } catch (e) {
+        console.error('[TestRunner] Erreur lors de l\'anonymisation:', e);
+        document.getElementById('pane-anonymized').textContent = 'ERREUR: ' + e.message;
+      } finally {
+        btn.innerHTML = 'Anonymiser';
+        btn.disabled = false;
+      }
+    }
+
+    /**
+     * Affiche le texte anonymise avec coloration art.4 / art.9
+     */
+    function renderAnonymizedText(result) {
+      const pane = document.getElementById('pane-anonymized');
+      pane.classList.remove('placeholder');
+
+      if (result.detections.length === 0) {
+        pane.textContent = result.anonymizedText;
+        return;
+      }
+
+      // Construire le HTML avec les highlights
+      let html = escapeHtml(result.anonymizedText);
+
+      // Remplacer les pseudonymes par des spans colores
+      // On traite les detections en sens inverse pour ne pas decaler les positions
+      for (let i = result.detections.length - 1; i >= 0; i--) {
+        const det = result.detections[i];
+        const pseudonym = '[' + det.pseudonym + ']';
+        const cssClass = det.rgpdCategory === 'art9' ? 'highlight-art9' : 'highlight-art4';
+
+        const escapedPseudonym = escapeHtml(pseudonym);
+        html = html.replace(
+          escapedPseudonym,
+          '<span class="' + cssClass + '" title="' + escapeHtml(det.patternId) + ' (' + det.confidence + ')">' + escapedPseudonym + '</span>'
+        );
+      }
+
+      pane.innerHTML = html;
+
+      // Afficher les badges
+      const badgeArt4 = document.getElementById('badge-art4');
+      const badgeArt9 = document.getElementById('badge-art9');
+
+      if (result.rgpdCategories.art4 > 0) {
+        badgeArt4.textContent = result.rgpdCategories.art4 + ' art.4';
+        badgeArt4.style.display = 'inline';
+      } else {
+        badgeArt4.style.display = 'none';
+      }
+
+      if (result.rgpdCategories.art9 > 0) {
+        badgeArt9.textContent = result.rgpdCategories.art9 + ' art.9';
+        badgeArt9.style.display = 'inline';
+      } else {
+        badgeArt9.style.display = 'none';
+      }
+    }
+
+    /**
+     * Met a jour la barre de statistiques
+     */
+    function renderStats(result) {
+      const statsBar = document.getElementById('stats-bar');
+      statsBar.style.display = 'flex';
+
+      document.getElementById('stat-total').textContent = result.replacementsCount;
+      document.getElementById('stat-art4').textContent = result.rgpdCategories.art4;
+      document.getElementById('stat-art9').textContent = result.rgpdCategories.art9;
+      document.getElementById('stat-time').textContent = result.processingTimeMs.toFixed(1) + ' ms';
+    }
+
+    /**
+     * Affiche la table de correspondance
+     */
+    function renderCorrespondenceTable(result) {
+      const section = document.getElementById('table-section');
+      const tbody = document.getElementById('corr-tbody');
+
+      if (result.detections.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="corr-empty">Aucune detection dans ce texte.</td></tr>';
+        section.style.display = 'block';
+        return;
+      }
+
+      let rows = '';
+      result.detections.forEach((det, idx) => {
+        const rgpdClass = det.rgpdCategory === 'art9' ? 'td-rgpd-art9' : 'td-rgpd-art4';
+        const rgpdLabel = det.rgpdCategory === 'art9' ? 'Art. 9 (sensible)' : 'Art. 4 (personnelle)';
+
+        rows += '<tr>'
+          + '<td style="color: #555;">' + (idx + 1) + '</td>'
+          + '<td class="td-pseudonym">[' + escapeHtml(det.pseudonym) + ']</td>'
+          + '<td class="td-original">' + escapeHtml(det.match) + '</td>'
+          + '<td>' + escapeHtml(det.patternId) + '</td>'
+          + '<td class="td-category">' + escapeHtml(det.category) + '</td>'
+          + '<td class="td-category ' + rgpdClass + '">' + rgpdLabel + '</td>'
+          + '<td style="color: #888;">' + det.confidence + '</td>'
+          + '</tr>';
+      });
+
+      tbody.innerHTML = rows;
+      section.style.display = 'block';
+    }
+
+    /**
+     * Lance les tests unitaires de patterns
+     */
+    function runPatternTests() {
+      const panel = document.getElementById('test-panel');
+      const summary = document.getElementById('test-summary');
+      const list = document.getElementById('test-results-list');
+
+      panel.classList.add('visible');
+
+      try {
+        const results = window.Anonymizator.TestPatterns.runTests();
+
+        // Afficher le resume
+        summary.innerHTML =
+          '<span class="pass">PASS: ' + results.passed + '</span>'
+          + '<span class="fail">FAIL: ' + results.failed + '</span>'
+          + '<span style="color: #888;">Total: ' + results.total + '</span>';
+
+        // Afficher chaque resultat
+        let html = '';
+        results.results.forEach(function(r) {
+          const statusClass = r.status === 'PASS' ? 'test-status-pass' : 'test-status-fail';
+          html += '<div class="test-result-item">'
+            + '<span class="test-status ' + statusClass + '">' + r.status + '</span>'
+            + '<span class="test-name">' + escapeHtml(r.name) + '</span>'
+            + '<span class="test-details">' + escapeHtml(r.details || '') + '</span>'
+            + '</div>';
+        });
+
+        list.innerHTML = html;
+      } catch (e) {
+        console.error('[TestRunner] Erreur lors des tests:', e);
+        summary.innerHTML = '<span class="fail">ERREUR: ' + escapeHtml(e.message) + '</span>';
+        list.innerHTML = '';
+      }
+    }
+
+    /**
+     * Reinitialise tout
+     */
+    async function resetAll() {
+      currentText = '';
+      lastResult = null;
+
+      // Reinitialiser le moteur
+      await window.Anonymizator.PseudonymEngine.reset();
+
+      // Reinitialiser l'affichage
+      const paneOriginal = document.getElementById('pane-original');
+      paneOriginal.classList.add('placeholder');
+      paneOriginal.innerHTML = 'Selectionnez un texte de test dans la barre d\'outils ci-dessus.';
+
+      const paneAnonymized = document.getElementById('pane-anonymized');
+      paneAnonymized.classList.add('placeholder');
+      paneAnonymized.innerHTML = 'Cliquez sur "Anonymiser" apres avoir charge un texte.';
+
+      document.getElementById('stats-bar').style.display = 'none';
+      document.getElementById('table-section').style.display = 'none';
+      document.getElementById('test-panel').classList.remove('visible');
+      document.getElementById('badge-art4').style.display = 'none';
+      document.getElementById('badge-art9').style.display = 'none';
+    }
+
+    /**
+     * Echappe le HTML pour eviter les injections XSS
+     */
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
+
+</body>
+</html>
