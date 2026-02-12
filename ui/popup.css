@@ -37,7 +37,7 @@ body.disabled .popup-header {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   letter-spacing: 0.3px;
 }
@@ -97,11 +97,11 @@ body.disabled .popup-header {
 }
 
 .popup-section-title {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: rgba(255, 255, 255, 0.45);
+  color: #888;
   margin-bottom: 8px;
 }
 
@@ -129,7 +129,7 @@ body.disabled .popup-header {
   align-items: center;
   gap: 4px;
   padding: 3px 8px;
-  border-radius: 12px;
+  border-radius: 4px;
   font-size: 11px;
   font-weight: 600;
 }
@@ -232,7 +232,7 @@ body.disabled .popup-header {
 }
 
 .btn-danger {
-  background: rgba(231, 76, 60, 0.12);
+  background: rgba(231, 76, 60, 0.10);
   color: #e74c3c;
   border: 1px solid rgba(231, 76, 60, 0.25);
 }
@@ -246,6 +246,6 @@ body.disabled .popup-header {
   text-align: center;
   padding: 10px 16px;
   font-size: 10px;
-  color: rgba(255, 255, 255, 0.25);
+  color: #555;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
