@@ -43,7 +43,19 @@ body.disabled .popup-header {
 }
 
 .popup-icon {
-  font-size: 18px;
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+.footer-link {
+  color: #666;
+  text-decoration: none;
+}
+
+.footer-link:hover {
+  color: #00b894;
+  text-decoration: underline;
 }
 
 /* --- Toggle switch --- */

@@ -35,7 +35,9 @@ body {
 }
 
 .options-icon {
-  font-size: 24px;
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
 }
 
 .options-title h1 {
