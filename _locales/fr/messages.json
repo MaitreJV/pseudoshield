@@ -1,0 +1,182 @@
+{
+  "extensionName": {
+    "message": "Anonymizator",
+    "description": "Nom de l'extension affiche dans le Chrome Web Store et le navigateur"
+  },
+  "extensionDescription": {
+    "message": "Anonymisez les donnees personnelles dans vos textes en un clic. Conforme RGPD.",
+    "description": "Description de l'extension pour le Chrome Web Store"
+  },
+  "toggleOn": {
+    "message": "Anonymisation activee",
+    "description": "Label quand l'anonymisation est active"
+  },
+  "toggleOff": {
+    "message": "Anonymisation desactivee",
+    "description": "Label quand l'anonymisation est inactive"
+  },
+  "sessionStats": {
+    "message": "Statistiques de session",
+    "description": "Titre de la section statistiques dans le popup"
+  },
+  "dataAnonymized": {
+    "message": "$COUNT$ donnee(s) anonymisee(s)",
+    "description": "Compteur de donnees anonymisees durant la session",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "42"
+      }
+    }
+  },
+  "art4Label": {
+    "message": "Art. 4 RGPD - Donnees personnelles",
+    "description": "Label pour les categories de donnees relevant de l'article 4 du RGPD"
+  },
+  "art9Label": {
+    "message": "Art. 9 RGPD - Donnees sensibles",
+    "description": "Label pour les categories de donnees relevant de l'article 9 du RGPD"
+  },
+  "categoryNames": {
+    "message": "Noms propres",
+    "description": "Categorie : noms et prenoms"
+  },
+  "categoryIBAN": {
+    "message": "IBAN",
+    "description": "Categorie : numeros IBAN"
+  },
+  "categoryEmails": {
+    "message": "Emails",
+    "description": "Categorie : adresses email"
+  },
+  "categoryNISS": {
+    "message": "NISS",
+    "description": "Categorie : numeros d'identification de securite sociale belge"
+  },
+  "categoryPhones": {
+    "message": "Telephones",
+    "description": "Categorie : numeros de telephone"
+  },
+  "categoryAddresses": {
+    "message": "Adresses",
+    "description": "Categorie : adresses postales"
+  },
+  "categoryVAT": {
+    "message": "TVA",
+    "description": "Categorie : numeros de TVA"
+  },
+  "categoryCreditCards": {
+    "message": "Cartes bancaires",
+    "description": "Categorie : numeros de cartes de credit/debit"
+  },
+  "categoryIP": {
+    "message": "IP",
+    "description": "Categorie : adresses IP"
+  },
+  "categoryDates": {
+    "message": "Dates",
+    "description": "Categorie : dates de naissance et autres dates personnelles"
+  },
+  "categoryIDCards": {
+    "message": "Cartes identite",
+    "description": "Categorie : numeros de carte d'identite"
+  },
+  "categoryBCE": {
+    "message": "BCE",
+    "description": "Categorie : numeros de la Banque-Carrefour des Entreprises"
+  },
+  "categoryPlates": {
+    "message": "Plaques",
+    "description": "Categorie : plaques d'immatriculation"
+  },
+  "categorySocialSecurity": {
+    "message": "Secu sociale",
+    "description": "Categorie : numeros de securite sociale (format generique)"
+  },
+  "correspondenceTable": {
+    "message": "Table de correspondance",
+    "description": "Titre de la section affichant les correspondances original/pseudonyme"
+  },
+  "exportJournal": {
+    "message": "Exporter le journal",
+    "description": "Bouton pour exporter le journal d'anonymisation au format JSON"
+  },
+  "resetSession": {
+    "message": "Reinitialiser la session",
+    "description": "Bouton pour remettre a zero les compteurs et la table de correspondance"
+  },
+  "optionsTitle": {
+    "message": "Options d'Anonymizator",
+    "description": "Titre de la page d'options"
+  },
+  "tabGeneral": {
+    "message": "General",
+    "description": "Onglet des parametres generaux"
+  },
+  "tabCategories": {
+    "message": "Categories",
+    "description": "Onglet de configuration des categories de donnees"
+  },
+  "tabSites": {
+    "message": "Sites",
+    "description": "Onglet de gestion des sites autorises/bloques"
+  },
+  "tabExport": {
+    "message": "Export",
+    "description": "Onglet d'export et de gestion des donnees"
+  },
+  "tabAbout": {
+    "message": "A propos",
+    "description": "Onglet d'informations sur l'extension"
+  },
+  "reveal": {
+    "message": "Reveler",
+    "description": "Bouton pour reveler temporairement la donnee originale"
+  },
+  "exportCSV": {
+    "message": "Exporter en CSV",
+    "description": "Bouton pour exporter les donnees au format CSV"
+  },
+  "exportJSON": {
+    "message": "Exporter en JSON",
+    "description": "Bouton pour exporter les donnees au format JSON"
+  },
+  "purge": {
+    "message": "Purger les donnees",
+    "description": "Bouton pour supprimer definitivement toutes les donnees stockees"
+  },
+  "toastMessage": {
+    "message": "$COUNT$ element(s) anonymise(s) sur cette page",
+    "description": "Message toast affiche apres anonymisation d'une page",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "5"
+      }
+    }
+  },
+  "noData": {
+    "message": "Aucune donnee personnelle detectee",
+    "description": "Message affiche quand aucune donnee n'a ete trouvee"
+  },
+  "searchPlaceholder": {
+    "message": "Rechercher dans la table...",
+    "description": "Placeholder du champ de recherche dans la table de correspondance"
+  },
+  "addSite": {
+    "message": "Ajouter un site",
+    "description": "Bouton pour ajouter un site a la liste"
+  },
+  "allSites": {
+    "message": "Tous les sites",
+    "description": "Option pour appliquer l'anonymisation sur tous les sites"
+  },
+  "version": {
+    "message": "v1.0.0",
+    "description": "Version actuelle de l'extension"
+  },
+  "credits": {
+    "message": "Developpe par Lawgitech — lawgitech.eu",
+    "description": "Credits et attribution dans la page A propos"
+  }
+}
