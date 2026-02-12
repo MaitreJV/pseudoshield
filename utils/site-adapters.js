@@ -110,6 +110,12 @@
   function insertViaNativeValue(element, text) {
     element.focus();
 
+    // Insérer au curseur plutôt qu'écraser tout le contenu
+    const start = element.selectionStart || 0;
+    const end = element.selectionEnd || 0;
+    const currentValue = element.value || '';
+    const newValue = currentValue.substring(0, start) + text + currentValue.substring(end);
+
     const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
       window.HTMLTextAreaElement.prototype, 'value'
     )?.set || Object.getOwnPropertyDescriptor(
@@ -117,14 +123,18 @@
     )?.set;
 
     if (nativeInputValueSetter) {
-      nativeInputValueSetter.call(element, text);
-      element.dispatchEvent(new Event('input', { bubbles: true }));
-      element.dispatchEvent(new Event('change', { bubbles: true }));
-      return true;
+      nativeInputValueSetter.call(element, newValue);
+    } else {
+      element.value = newValue;
     }
 
-    element.value = text;
+    // Repositionner le curseur après le texte inséré
+    const newCursorPos = start + text.length;
+    element.selectionStart = newCursorPos;
+    element.selectionEnd = newCursorPos;
+
     element.dispatchEvent(new Event('input', { bubbles: true }));
+    element.dispatchEvent(new Event('change', { bubbles: true }));
     return true;
   }
 
@@ -132,10 +142,26 @@
     element.focus();
     const success = document.execCommand('insertText', false, text);
     if (!success) {
+      // Fallback : insérer au curseur plutôt qu'écraser
       if (element.tagName === 'TEXTAREA' || element.tagName === 'INPUT') {
-        element.value = text;
+        const start = element.selectionStart || 0;
+        const end = element.selectionEnd || 0;
+        const currentValue = element.value || '';
+        element.value = currentValue.substring(0, start) + text + currentValue.substring(end);
+        const newCursorPos = start + text.length;
+        element.selectionStart = newCursorPos;
+        element.selectionEnd = newCursorPos;
       } else {
-        element.textContent = text;
+        // contentEditable : insérer au point de sélection
+        const selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+          const range = selection.getRangeAt(0);
+          range.deleteContents();
+          range.insertNode(document.createTextNode(text));
+          range.collapse(false);
+        } else {
+          element.textContent += text;
+        }
       }
       element.dispatchEvent(new Event('input', { bubbles: true }));
     }

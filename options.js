@@ -38,12 +38,12 @@
 
       tbody.innerHTML = filtered.map(([hash, data]) =>
         '<tr>' +
-          '<td><strong>' + data.pseudonym + '</strong></td>' +
-          '<td>' + data.category + '</td>' +
-          '<td><span class="badge-small badge-' + data.rgpdCategory + '">' + data.rgpdCategory + '</span></td>' +
-          '<td>' + new Date(data.firstSeen).toLocaleDateString('fr-BE') + '</td>' +
-          '<td>' + data.count + '</td>' +
-          '<td><button class="btn-reveal" data-pseudonym="' + data.pseudonym + '" disabled title="Original non disponible (session expirée)">Révéler</button></td>' +
+          '<td><strong>' + escapeHtml(data.pseudonym) + '</strong></td>' +
+          '<td>' + escapeHtml(data.category) + '</td>' +
+          '<td><span class="badge-small badge-' + escapeHtml(data.rgpdCategory) + '">' + escapeHtml(data.rgpdCategory) + '</span></td>' +
+          '<td>' + escapeHtml(new Date(data.firstSeen).toLocaleDateString('fr-BE')) + '</td>' +
+          '<td>' + escapeHtml(String(data.count)) + '</td>' +
+          '<td><button class="btn-reveal" data-pseudonym="' + escapeHtml(data.pseudonym) + '" disabled title="Original non disponible (session expirée)">Révéler</button></td>' +
         '</tr>'
       ).join('');
     }
@@ -148,8 +148,8 @@
       }
       listEl.innerHTML = whitelist.map((domain, i) =>
         '<div class="site-item">' +
-          '<span class="site-domain">' + domain + '</span>' +
-          '<button class="btn-remove" data-index="' + i + '" title="Supprimer ce domaine">✕</button>' +
+          '<span class="site-domain">' + escapeHtml(domain) + '</span>' +
+          '<button class="btn-remove" data-index="' + i + '" title="Supprimer ce domaine">&#10005;</button>' +
         '</div>'
       ).join('');
     }
@@ -200,14 +200,14 @@
         return;
       }
 
-      tbody.innerHTML = entries.reverse().map(e =>
+      tbody.innerHTML = [...entries].reverse().map(e =>
         '<tr>' +
-          '<td>' + new Date(e.timestamp).toLocaleString('fr-BE') + '</td>' +
-          '<td class="url-cell" title="' + e.url + '">' + e.url + '</td>' +
-          '<td>' + e.replacementsCount + '</td>' +
-          '<td>' + (e.categoriesAffected?.art4 || 0) + '</td>' +
-          '<td>' + (e.categoriesAffected?.art9 || 0) + '</td>' +
-          '<td class="patterns-cell">' + e.patternsTriggered.join(', ') + '</td>' +
+          '<td>' + escapeHtml(new Date(e.timestamp).toLocaleString('fr-BE')) + '</td>' +
+          '<td class="url-cell" title="' + escapeHtml(e.url) + '">' + escapeHtml(e.url) + '</td>' +
+          '<td>' + escapeHtml(String(e.replacementsCount)) + '</td>' +
+          '<td>' + escapeHtml(String(e.categoriesAffected?.art4 || 0)) + '</td>' +
+          '<td>' + escapeHtml(String(e.categoriesAffected?.art9 || 0)) + '</td>' +
+          '<td class="patterns-cell">' + escapeHtml(e.patternsTriggered.join(', ')) + '</td>' +
         '</tr>'
       ).join('');
     }
@@ -277,6 +277,13 @@
     const csv = [headers, ...rows].map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\n');
     downloadFile('anonymizator-correspondance.csv', csv, 'text/csv');
   });
+
+  // Echappement HTML pour prévenir les injections XSS
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
 
   // Initialisation
   initTabs();

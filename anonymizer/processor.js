@@ -17,7 +17,7 @@
     if (!text || typeof text !== 'string') {
       return {
         anonymizedText: text || '',
-        originalText: text || '',
+        originalTextLength: (text || '').length,
         replacementsCount: 0,
         detections: [],
         rgpdCategories: { art4: 0, art9: 0 },
@@ -32,7 +32,7 @@
     if (detections.length === 0) {
       return {
         anonymizedText: text,
-        originalText: text,
+        originalTextLength: text.length,
         replacementsCount: 0,
         detections: [],
         rgpdCategories: { art4: 0, art9: 0 },
@@ -73,7 +73,7 @@
 
     return {
       anonymizedText,
-      originalText: text,
+      originalTextLength: text.length,
       replacementsCount: detections.length,
       detections: processedDetections,
       rgpdCategories,

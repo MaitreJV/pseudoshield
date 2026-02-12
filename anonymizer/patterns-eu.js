@@ -113,7 +113,7 @@
       category: 'financier',
       rgpdCategory: 'art4',
       confidence: 'high',
-      regex: /\bLU\d{2}[\s.\-]?\d{3}[\s.\-]?\d{13}\b/gi,
+      regex: /\bLU\d{2}[\s.\-]?\d{3}[\s.\-]?\d{4}[\s.\-]?\d{4}[\s.\-]?\d{4}[\s.\-]?\d{1}\b/gi,
       validator: validateIBAN,
       pseudonymPrefix: 'IBAN',
       enabled: true
@@ -250,7 +250,7 @@
       category: 'identite',
       rgpdCategory: 'art4',
       confidence: 'medium',
-      regex: /\b1-[A-Z]{3}-\d{3}\b/g,
+      regex: /\b[12]-[A-Z]{3}-\d{3}\b/gi,
       pseudonymPrefix: 'Plaque',
       enabled: true
     }

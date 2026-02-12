@@ -32,6 +32,7 @@
         "anonymizer/pseudonym-engine.js",
         "anonymizer/processor.js",
         "anonymizer/rgpd-logger.js",
+        "utils/clipboard.js",
         "utils/site-adapters.js",
         "ui/toast.js",
         "content.js"

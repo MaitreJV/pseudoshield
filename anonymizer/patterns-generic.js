@@ -35,6 +35,34 @@
     }
   }
 
+  /**
+   * Validation modulo 97 pour le numéro de sécurité sociale français
+   * Clé = 97 - (13 premiers chiffres % 97)
+   * @param {string} match - Numéro sécu détecté
+   * @returns {boolean} true si le numéro est valide
+   */
+  function validateSecuFR(match) {
+    try {
+      const clean = match.replace(/\s/g, '');
+      if (clean.length !== 15) return false;
+
+      // Valider le sexe (1 ou 2)
+      if (clean[0] !== '1' && clean[0] !== '2') return false;
+
+      // Valider le mois (01-12 ou 20 pour la Corse)
+      const month = parseInt(clean.substring(3, 5), 10);
+      if (month < 1 || (month > 12 && month !== 20)) return false;
+
+      const base = parseInt(clean.substring(0, 13), 10);
+      const key = parseInt(clean.substring(13, 15), 10);
+
+      return (97 - (base % 97)) === key;
+    } catch (e) {
+      console.error('[Anonymizator] Erreur validation SECU_FR:', e);
+      return false;
+    }
+  }
+
   // Civilités pour la détection de noms propres
   const CIVILITES = '(?:M\\.|Mme|Mlle|Maître|Maitre|Me|Mr|Mrs|Ms|Dr|Pr|Prof)';
 
@@ -186,6 +214,7 @@
       rgpdCategory: 'art9',
       confidence: 'high',
       regex: /\b[12]\s?\d{2}\s?\d{2}\s?\d{2}\s?\d{3}\s?\d{3}\s?\d{2}\b/g,
+      validator: validateSecuFR,
       pseudonymPrefix: 'Secu',
       enabled: true
     }
@@ -194,6 +223,6 @@
   window.Anonymizator.PatternsGeneric = PATTERNS_GENERIC;
   window.Anonymizator.Validators = Object.assign(
     window.Anonymizator.Validators || {},
-    { validateLuhn }
+    { validateLuhn, validateSecuFR }
   );
 })();

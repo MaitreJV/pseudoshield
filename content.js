@@ -41,7 +41,16 @@
     const adapter = window.Anonymizator.SiteAdapters.getAdapter();
 
     try {
-      const result = await window.Anonymizator.Processor.process(text);
+      // Charger les patterns désactivés depuis la config
+      const config = await chrome.storage.local.get('anonymizator_disabled_patterns');
+      const disabledPatterns = config.anonymizator_disabled_patterns || [];
+      const allPatternIds = [
+        ...(window.Anonymizator.PatternsEU || []),
+        ...(window.Anonymizator.PatternsGeneric || [])
+      ].map(p => p.id);
+      const enabledPatterns = allPatternIds.filter(id => !disabledPatterns.includes(id));
+
+      const result = await window.Anonymizator.Processor.process(text, { enabledPatterns });
 
       if (result.replacementsCount === 0) return;
 

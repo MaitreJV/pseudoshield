@@ -40,7 +40,7 @@
       replacementsCount: result.replacementsCount,
       categoriesAffected: result.rgpdCategories,
       categoryCounts: result.categoryCounts,
-      textLengthOriginal: result.originalText.length,
+      textLengthOriginal: result.originalTextLength,
       textLengthAnonymized: result.anonymizedText.length,
       processingTimeMs: Math.round(result.processingTimeMs),
       sessionId: getSessionId()

@@ -18,33 +18,7 @@
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   }
 
-  const hashCache = new Map();
-
-  /**
-   * Version avec cache pour éviter les recalculs
-   * @param {string} text - Texte à hasher
-   * @returns {Promise<string>} Hash en hexadécimal
-   */
-  function sha256Cached(text) {
-    if (hashCache.has(text)) {
-      return Promise.resolve(hashCache.get(text));
-    }
-    return sha256(text).then(hash => {
-      hashCache.set(text, hash);
-      return hash;
-    });
-  }
-
-  /**
-   * Vide le cache de hashs
-   */
-  function clearHashCache() {
-    hashCache.clear();
-  }
-
   window.Anonymizator.Hash = {
-    sha256,
-    sha256Cached,
-    clearHashCache
+    sha256
   };
 })();
