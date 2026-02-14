@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="ui/options.css">
-  <title>Anonymizator — Options</title>
+  <title>PseudoShield — Options</title>
 </head>
 <body>
   <div class="options-container">
@@ -13,8 +13,8 @@
     <header class="options-header">
       <div class="options-title">
         <img src="icons/icon-48.png" alt="" class="options-icon">
-        <h1>Anonymizator</h1>
-        <span class="version-badge">v1.0.0</span>
+        <h1>PseudoShield</h1>
+        <span class="version-badge">v2.0.0</span>
       </div>
     </header>
 
@@ -58,8 +58,32 @@
     <section id="tab-patterns" class="tab-panel">
       <div class="panel-header">
         <h2 class="panel-title">Configuration des patterns</h2>
-        <p class="panel-description">Activez ou désactivez les patterns de détection par catégorie.</p>
+        <p class="panel-description">Activez ou desactivez les patterns de detection par categorie.</p>
       </div>
+
+      <!-- Seuil de confiance -->
+      <div class="confidence-section">
+        <h3 class="section-subtitle">Seuil de confiance</h3>
+        <p class="section-description">Controlez la sensibilite de la detection. Un seuil strict reduit les faux positifs.</p>
+        <div class="confidence-options">
+          <label class="confidence-option">
+            <input type="radio" name="confidence-threshold" value="high">
+            <span class="confidence-label">Strict</span>
+            <span class="confidence-desc">Haute confiance uniquement — minimum de faux positifs</span>
+          </label>
+          <label class="confidence-option">
+            <input type="radio" name="confidence-threshold" value="medium" checked>
+            <span class="confidence-label">Equilibre</span>
+            <span class="confidence-desc">Haute + moyenne confiance — recommande</span>
+          </label>
+          <label class="confidence-option">
+            <input type="radio" name="confidence-threshold" value="low">
+            <span class="confidence-label">Agressif</span>
+            <span class="confidence-desc">Toutes les detections — detection maximale</span>
+          </label>
+        </div>
+      </div>
+
       <div id="patterns-container"></div>
     </section>
 
@@ -67,7 +91,7 @@
     <section id="tab-sites" class="tab-panel">
       <div class="panel-header">
         <h2 class="panel-title">Sites surveillés</h2>
-        <p class="panel-description">Gérez les domaines sur lesquels l'anonymisation est active.</p>
+        <p class="panel-description">Gérez les domaines sur lesquels la pseudonymisation est active.</p>
       </div>
       <div class="site-toggle-section">
         <label class="toggle-switch">
@@ -87,7 +111,7 @@
     <section id="tab-journal" class="tab-panel">
       <div class="panel-header">
         <h2 class="panel-title">Journal RGPD</h2>
-        <p class="panel-description">Registre des traitements d'anonymisation conformément au RGPD.</p>
+        <p class="panel-description">Registre des traitements de pseudonymisation conformément au RGPD.</p>
       </div>
       <div class="journal-filters">
         <div class="filter-row">
@@ -132,7 +156,7 @@
 
     <!-- Footer -->
     <footer class="options-footer">
-      Anonymizator v1.0.0 · <a href="https://lawgitech.eu" target="_blank" rel="noopener">lawgitech.eu</a>
+      PseudoShield v2.0.0 · <a href="https://lawgitech.eu" target="_blank" rel="noopener">lawgitech.eu</a>
     </footer>
 
   </div>

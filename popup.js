@@ -15,7 +15,7 @@
       const response = await chrome.runtime.sendMessage({ type: 'getSessionStats' });
       const stats = response?.stats || { total: 0, art4: 0, art9: 0, categoryCounts: {} };
 
-      document.getElementById('stats-total').textContent = stats.total + ' données anonymisées';
+      document.getElementById('stats-total').textContent = stats.total + ' donnees pseudonymisees';
       document.getElementById('stats-art4').textContent = stats.art4;
       document.getElementById('stats-art9').textContent = stats.art9;
 
@@ -35,18 +35,18 @@
         ).join('');
       }
     } catch (e) {
-      console.error('[Anonymizator] Erreur chargement stats:', e);
+      console.error('[PseudoShield] Erreur chargement stats:', e);
     }
   }
 
   async function loadToggleState() {
     try {
-      const result = await chrome.storage.local.get('anonymizator_enabled');
-      const enabled = result.anonymizator_enabled !== false;
+      const result = await chrome.storage.local.get('pseudoshield_enabled');
+      const enabled = result.pseudoshield_enabled !== false;
       document.getElementById('toggle-enabled').checked = enabled;
       document.body.classList.toggle('disabled', !enabled);
     } catch (e) {
-      console.error('[Anonymizator] Erreur chargement état toggle:', e);
+      console.error('[PseudoShield] Erreur chargement état toggle:', e);
     }
   }
 

@@ -3,7 +3,7 @@
 (function() {
   'use strict';
 
-  if (!window.Anonymizator) window.Anonymizator = {};
+  if (!window.PseudoShield) window.PseudoShield = {};
 
   function getTextFromPasteEvent(event) {
     if (event.clipboardData) {
@@ -15,7 +15,7 @@
     return '';
   }
 
-  window.Anonymizator.Clipboard = {
+  window.PseudoShield.Clipboard = {
     getTextFromPasteEvent
   };
 })();

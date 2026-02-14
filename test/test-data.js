@@ -3,9 +3,9 @@
 (function() {
   'use strict';
 
-  if (!window.Anonymizator) window.Anonymizator = {};
+  if (!window.PseudoShield) window.PseudoShield = {};
 
-  window.Anonymizator.TestData = {
+  window.PseudoShield.TestData = {
     // 1. Texte juridique belge
     juridiqueBelge: `Cher Maître Van den Berg,
 
@@ -44,7 +44,7 @@ Adresse : 8 place du Sablon, 1000 Bruxelles
 Diagnostic : Le patient présente un trouble dépressif majeur (F32.1) avec antécédents d'anxiété généralisée. Traitement en cours : Escitalopram 10mg/jour.
 
 Médecin traitant : Dr. Catherine Dubois
-INAMI : 1-23456-78-901`,
+INAMI : 1-23456-72-901`,
 
     // 4. Contrat commercial
     contratCommercial: `ENTRE :
@@ -54,9 +54,27 @@ ET :
 La société CLOUDSERVE SPRL, BCE 0234.567.890, ayant son siège social au 50 rue Haute, 1000 Bruxelles, représentée par Mme Laura Martens, gérante, TVA BE0234.567.890, IBAN : BE62 5100 1234 5678
 Contact : l.martens@cloudserve.be / +32 498 76 54 32`,
 
-    // 5. Texte sans données personnelles (pour test faux positifs)
-    sansDonn: `Le règlement général sur la protection des données (RGPD) est un règlement de l'Union européenne qui constitue le texte de référence en matière de protection des données à caractère personnel. Il renforce et unifie la protection des données pour les individus au sein de l'Union européenne.
+    // 5. Texte sans donnees personnelles (pour test faux positifs)
+    sansDonn: `Le reglement general sur la protection des donnees (RGPD) est un reglement de l'Union europeenne qui constitue le texte de reference en matiere de protection des donnees a caractere personnel. Il renforce et unifie la protection des donnees pour les individus au sein de l'Union europeenne.
 
-Le RGPD est entré en application le 25 mai 2018. Il s'applique à toute organisation, publique et privée, qui traite des données personnelles pour son compte ou non, dès lors qu'elle est établie sur le territoire de l'Union européenne ou que son activité cible directement des résidents européens.`
+Le RGPD est entre en application le 25 mai 2018. Il s'applique a toute organisation, publique et privee, qui traite des donnees personnelles pour son compte ou non, des lors qu'elle est etablie sur le territoire de l'Union europeenne ou que son activite cible directement des residents europeens.`,
+
+    // 6. Donnees numeriques (Phase 2 — passeports, GPS, URLs PII, handles sociaux)
+    numerique: `RAPPORT D'INVESTIGATION
+Sujet : Jean-Marc Delvaux, passeport EH654321
+
+Localisation : le suspect a ete localise aux coordonnees 50.8503, 4.3517 (centre de Bruxelles)
+le 12/02/2026 a 14h30.
+
+Profil en ligne : @jmdelvaux (Twitter), @jm_delvaux (Instagram)
+
+Liens consultes :
+- https://example.com/profile?user_id=12345&email=jm.delvaux@mail.be
+- https://api.service.com/data?token=abc123secret&name=Delvaux
+
+Son medecin traitant, Dr. Catherine Dubois (INAMI 1-23456-72-901), a confirme le rendez-vous.
+
+Le Tribunal Commerce de Bruxelles a ete saisi par la Commission Europeenne dans cette affaire.
+IP du serveur : 192.168.1.100`
   };
 })();

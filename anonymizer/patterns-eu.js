@@ -3,7 +3,7 @@
 (function() {
   'use strict';
 
-  if (!window.Anonymizator) window.Anonymizator = {};
+  if (!window.PseudoShield) window.PseudoShield = {};
 
   /**
    * Validation modulo 97 pour le NISS belge
@@ -28,7 +28,30 @@
 
       return false;
     } catch (e) {
-      console.error('[Anonymizator] Erreur validation NISS:', e);
+      console.error('[PseudoShield] Erreur validation NISS:', e);
+      return false;
+    }
+  }
+
+  /**
+   * Validation modulo 97 pour le numéro INAMI belge
+   * Format : X-XXXXX-XX-XXX (11 chiffres)
+   * Checksum : les chiffres 7-8 = base (6 premiers chiffres) modulo 97
+   * @param {string} match - Numéro INAMI détecté
+   * @returns {boolean} true si le numéro INAMI est valide
+   */
+  function validateINAMI(match) {
+    try {
+      const clean = match.replace(/[\-\s]/g, '');
+      if (clean.length !== 11) return false;
+
+      const base = parseInt(clean.substring(0, 6), 10);
+      const check = parseInt(clean.substring(6, 8), 10);
+
+      // Deux variantes de checksum connues
+      return (base % 97) === check || (97 - (base % 97)) === check;
+    } catch (e) {
+      console.error('[PseudoShield] Erreur validation INAMI:', e);
       return false;
     }
   }
@@ -61,7 +84,7 @@
 
       return remainder === 1;
     } catch (e) {
-      console.error('[Anonymizator] Erreur validation IBAN:', e);
+      console.error('[PseudoShield] Erreur validation IBAN:', e);
       return false;
     }
   }
@@ -256,9 +279,47 @@
       regex: /\b[12]-[A-Z]{3}-\d{3}\b/gi,
       pseudonymPrefix: 'Plaque',
       enabled: true
+    },
+
+    // 16. Passeport belge (série EH ou EI + 6 chiffres)
+    {
+      id: 'PASSPORT_BE',
+      label: 'Passeport belge',
+      category: 'identite',
+      rgpdCategory: 'art4',
+      confidence: 'high',
+      regex: /\bE[HI]\d{6}\b/g,
+      pseudonymPrefix: 'Passeport',
+      enabled: true
+    },
+
+    // 17. Passeport français (2 chiffres + 2 lettres + 5 chiffres)
+    {
+      id: 'PASSPORT_FR',
+      label: 'Passeport français',
+      category: 'identite',
+      rgpdCategory: 'art4',
+      confidence: 'high',
+      regex: /\b\d{2}[A-Z]{2}\d{5}\b/g,
+      pseudonymPrefix: 'Passeport',
+      enabled: true
+    },
+
+    // 18. Numéro INAMI (médecin/praticien belge)
+    // Format : X-XXXXX-XX-XXX avec modulo 97 sur les 6 premiers chiffres
+    {
+      id: 'INAMI_BE',
+      label: 'Numéro INAMI',
+      category: 'identite',
+      rgpdCategory: 'art4',
+      confidence: 'high',
+      regex: /\b[1-9]-?\d{5}-?\d{2}-?\d{3}\b/g,
+      validator: validateINAMI,
+      pseudonymPrefix: 'INAMI',
+      enabled: true
     }
   ];
 
-  window.Anonymizator.PatternsEU = PATTERNS_EU;
-  window.Anonymizator.Validators = { validateNISS, validateIBAN };
+  window.PseudoShield.PatternsEU = PATTERNS_EU;
+  window.PseudoShield.Validators = { validateNISS, validateIBAN, validateINAMI };
 })();

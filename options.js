@@ -2,6 +2,20 @@
 (function() {
   'use strict';
 
+  // Debounce inline — options.html ne charge pas les content_scripts
+  function debounce(fn, delay) {
+    var timer;
+    return function() {
+      var args = arguments;
+      var context = this;
+      clearTimeout(timer);
+      timer = setTimeout(function() { fn.apply(context, args); }, delay);
+    };
+  }
+
+  // Regex de validation de domaine
+  var DOMAIN_REGEX = /^(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}$/i;
+
   // Navigation par onglets
   function initTabs() {
     const tabs = document.querySelectorAll('.tab-btn');
@@ -19,8 +33,8 @@
 
   // Onglet 1 : Table de correspondance
   async function loadCorrespondenceTable() {
-    const result = await chrome.storage.local.get(['anonymizator_table']);
-    const table = result.anonymizator_table || {};
+    const result = await chrome.storage.local.get(['pseudoshield_table']);
+    const table = result.pseudoshield_table || {};
     const entries = Object.entries(table);
     const tbody = document.getElementById('correspondence-tbody');
     const searchInput = document.getElementById('correspondence-search');
@@ -54,8 +68,8 @@
 
   // Onglet 2 : Configuration des patterns
   async function loadPatternConfig() {
-    const result = await chrome.storage.local.get('anonymizator_disabled_patterns');
-    const disabledPatterns = result.anonymizator_disabled_patterns || [];
+    const result = await chrome.storage.local.get('pseudoshield_disabled_patterns');
+    const disabledPatterns = result.pseudoshield_disabled_patterns || [];
     const container = document.getElementById('patterns-container');
 
     // Définition des patterns pour la page d'options
@@ -88,7 +102,13 @@
       { id: 'NOM_CONTEXTE', label: 'Nom propre (contexte)', category: 'identite', rgpdCategory: 'art4', confidence: 'medium' },
       { id: 'NOM_MULTICONTEXTE', label: 'Nom propre (multi-mots)', category: 'identite', rgpdCategory: 'art4', confidence: 'medium' },
       { id: 'NOM_CONSECUTIF', label: 'Nom propre (heuristique)', category: 'identite', rgpdCategory: 'art4', confidence: 'low' },
-      { id: 'SECU_FR', label: 'Sécurité sociale FR', category: 'identite', rgpdCategory: 'art9', confidence: 'high' }
+      { id: 'SECU_FR', label: 'Securite sociale FR', category: 'identite', rgpdCategory: 'art9', confidence: 'high' },
+      { id: 'PASSPORT_BE', label: 'Passeport belge', category: 'identite', rgpdCategory: 'art4', confidence: 'high' },
+      { id: 'PASSPORT_FR', label: 'Passeport francais', category: 'identite', rgpdCategory: 'art4', confidence: 'high' },
+      { id: 'INAMI_BE', label: 'Numero INAMI', category: 'identite', rgpdCategory: 'art4', confidence: 'high' },
+      { id: 'GPS_COORD', label: 'Coordonnees GPS', category: 'technique', rgpdCategory: 'art4', confidence: 'medium' },
+      { id: 'URL_PII', label: 'URL avec donnees personnelles', category: 'technique', rgpdCategory: 'art4', confidence: 'medium' },
+      { id: 'SOCIAL_HANDLE', label: 'Handle reseau social', category: 'contact', rgpdCategory: 'art4', confidence: 'low' }
     ];
 
     const categories = { identite: 'Identité', contact: 'Contact', financier: 'Financier', adresse: 'Adresse', technique: 'Technique' };
@@ -115,11 +135,19 @@
 
     container.innerHTML = html;
 
-    // Écoute des changements de toggle
+    // Sauvegarde debounced des patterns desactives (300ms)
+    var pendingDisabled = null;
+    var debouncedSavePatterns = debounce(async function() {
+      if (pendingDisabled !== null) {
+        await chrome.storage.local.set({ pseudoshield_disabled_patterns: pendingDisabled });
+      }
+    }, 300);
+
+    // Ecoute des changements de toggle
     container.addEventListener('change', async (e) => {
       if (e.target.dataset.patternId) {
-        const result = await chrome.storage.local.get('anonymizator_disabled_patterns');
-        const disabled = result.anonymizator_disabled_patterns || [];
+        const result = await chrome.storage.local.get('pseudoshield_disabled_patterns');
+        const disabled = result.pseudoshield_disabled_patterns || [];
         const id = e.target.dataset.patternId;
 
         if (e.target.checked) {
@@ -129,16 +157,38 @@
           if (!disabled.includes(id)) disabled.push(id);
         }
 
-        await chrome.storage.local.set({ anonymizator_disabled_patterns: disabled });
+        pendingDisabled = disabled;
+        debouncedSavePatterns();
       }
+    });
+  }
+
+  // Chargement et gestion du seuil de confiance
+  async function loadConfidenceThreshold() {
+    const result = await chrome.storage.local.get('pseudoshield_confidence_threshold');
+    const threshold = result.pseudoshield_confidence_threshold || 'low';
+
+    // Cocher le radio button correspondant
+    const radios = document.querySelectorAll('input[name="confidence-threshold"]');
+    radios.forEach(radio => {
+      radio.checked = (radio.value === threshold);
+    });
+
+    // Ecouter les changements
+    radios.forEach(radio => {
+      radio.addEventListener('change', async (e) => {
+        if (e.target.checked) {
+          await chrome.storage.local.set({ pseudoshield_confidence_threshold: e.target.value });
+        }
+      });
     });
   }
 
   // Onglet 3 : Whitelist des sites
   async function loadSites() {
-    const result = await chrome.storage.local.get(['anonymizator_whitelist', 'anonymizator_allSites']);
-    const whitelist = result.anonymizator_whitelist || ['claude.ai', 'chatgpt.com', 'gemini.google.com', 'copilot.microsoft.com', 'chat.deepseek.com', 'perplexity.ai'];
-    const allSites = result.anonymizator_allSites || false;
+    const result = await chrome.storage.local.get(['pseudoshield_whitelist', 'pseudoshield_allSites']);
+    const whitelist = result.pseudoshield_whitelist || ['claude.ai', 'chatgpt.com', 'gemini.google.com', 'copilot.microsoft.com', 'chat.deepseek.com', 'perplexity.ai'];
+    const allSites = result.pseudoshield_allSites || false;
 
     document.getElementById('all-sites-toggle').checked = allSites;
 
@@ -162,7 +212,7 @@
       if (e.target.classList.contains('btn-remove')) {
         const idx = parseInt(e.target.dataset.index);
         whitelist.splice(idx, 1);
-        await chrome.storage.local.set({ anonymizator_whitelist: whitelist });
+        await chrome.storage.local.set({ pseudoshield_whitelist: whitelist });
         renderSites();
       }
     });
@@ -170,12 +220,24 @@
     document.getElementById('add-site-btn').addEventListener('click', async () => {
       const input = document.getElementById('add-site-input');
       const domain = input.value.trim().toLowerCase();
-      if (domain && !whitelist.includes(domain)) {
-        whitelist.push(domain);
-        await chrome.storage.local.set({ anonymizator_whitelist: whitelist });
-        input.value = '';
-        renderSites();
+
+      if (!domain) return;
+
+      // Validation du format de domaine
+      if (!DOMAIN_REGEX.test(domain)) {
+        alert('Format de domaine invalide. Exemples valides : example.com, chat.example.com');
+        return;
       }
+
+      if (whitelist.includes(domain)) {
+        alert('Ce domaine est deja dans la liste.');
+        return;
+      }
+
+      whitelist.push(domain);
+      await chrome.storage.local.set({ pseudoshield_whitelist: whitelist });
+      input.value = '';
+      renderSites();
     });
 
     // Permettre l'ajout avec la touche Entrée
@@ -186,14 +248,14 @@
     });
 
     document.getElementById('all-sites-toggle').addEventListener('change', async (e) => {
-      await chrome.storage.local.set({ anonymizator_allSites: e.target.checked });
+      await chrome.storage.local.set({ pseudoshield_allSites: e.target.checked });
     });
   }
 
   // Onglet 4 : Journal RGPD
   async function loadJournal() {
-    const result = await chrome.storage.local.get('anonymizator_journal');
-    const journal = result.anonymizator_journal || [];
+    const result = await chrome.storage.local.get('pseudoshield_journal');
+    const journal = result.pseudoshield_journal || [];
     const tbody = document.getElementById('journal-tbody');
 
     function render(entries) {
@@ -241,18 +303,18 @@
         e.patternsTriggered.join('; ')
       ]);
       const csv = [headers, ...rows].map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\n');
-      downloadFile('anonymizator-journal.csv', csv, 'text/csv');
+      downloadFile('pseudoshield-journal.csv', csv, 'text/csv');
     });
 
     // Export JSON
     document.getElementById('journal-export-json').addEventListener('click', () => {
-      downloadFile('anonymizator-journal.json', JSON.stringify(journal, null, 2), 'application/json');
+      downloadFile('pseudoshield-journal.json', JSON.stringify(journal, null, 2), 'application/json');
     });
 
     // Purge
     document.getElementById('journal-purge').addEventListener('click', async () => {
       if (confirm('Supprimer définitivement tout le journal RGPD ?')) {
-        await chrome.storage.local.remove('anonymizator_journal');
+        await chrome.storage.local.remove('pseudoshield_journal');
         render([]);
       }
     });
@@ -271,13 +333,13 @@
 
   // Export CSV de la table de correspondance
   document.getElementById('correspondence-export-csv')?.addEventListener('click', async () => {
-    const result = await chrome.storage.local.get(['anonymizator_table']);
-    const table = result.anonymizator_table || {};
+    const result = await chrome.storage.local.get(['pseudoshield_table']);
+    const table = result.pseudoshield_table || {};
     const entries = Object.values(table);
     const headers = ['Pseudonyme', 'Catégorie', 'Art. RGPD', 'Première détection', 'Dernière détection', 'Occurrences'];
     const rows = entries.map(e => [e.pseudonym, e.category, e.rgpdCategory, e.firstSeen, e.lastSeen, e.count]);
     const csv = [headers, ...rows].map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\n');
-    downloadFile('anonymizator-correspondance.csv', csv, 'text/csv');
+    downloadFile('pseudoshield-correspondance.csv', csv, 'text/csv');
   });
 
   // Echappement HTML pour prévenir les injections XSS
@@ -291,6 +353,7 @@
   initTabs();
   loadCorrespondenceTable();
   loadPatternConfig();
+  loadConfidenceThreshold();
   loadSites();
   loadJournal();
 })();

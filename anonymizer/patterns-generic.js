@@ -3,7 +3,7 @@
 (function() {
   'use strict';
 
-  if (!window.Anonymizator) window.Anonymizator = {};
+  if (!window.PseudoShield) window.PseudoShield = {};
 
   /**
    * Validation Luhn pour cartes bancaires
@@ -30,7 +30,7 @@
 
       return sum % 10 === 0;
     } catch (e) {
-      console.error('[Anonymizator] Erreur validation Luhn:', e);
+      console.error('[PseudoShield] Erreur validation Luhn:', e);
       return false;
     }
   }
@@ -58,7 +58,7 @@
 
       return (97 - (base % 97)) === key;
     } catch (e) {
-      console.error('[Anonymizator] Erreur validation SECU_FR:', e);
+      console.error('[PseudoShield] Erreur validation SECU_FR:', e);
       return false;
     }
   }
@@ -223,6 +223,8 @@
 
     // 13. Noms propres heuristiques : Prénom Nom consécutifs, pas en début de phrase
     // Lookbehind : précédé d'un saut de ligne, ponctuation, ou fin de mot en minuscule
+    // confidenceAdjuster : rejette les faux positifs (expressions institutionnelles),
+    // boost la confiance si le premier mot est un prénom connu
     {
       id: 'NOM_CONSECUTIF',
       label: 'Nom propre (heuristique)',
@@ -237,6 +239,29 @@
         '[A-ZÀ-Ÿ][a-zà-ÿ]{2,}',
         'g'
       ),
+      confidenceAdjuster: function(matchText) {
+        var fp = window.PseudoShield.Data && window.PseudoShield.Data.FalsePositiveBigrams;
+        var names = window.PseudoShield.Data && window.PseudoShield.Data.FirstNames;
+
+        // 1. Rejet si faux positif connu (expression institutionnelle)
+        // Normaliser : retirer les accents pour comparaison avec le Set (sans accents)
+        var normalized = matchText.toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '');
+        if (fp && fp.has(normalized)) return null;
+
+        // 2. Extraire les mots capitalisés et rejeter si un mot > 15 caractères
+        var words = matchText.split(/\s+/).filter(function(w) { return /^[A-ZÀ-Ÿ]/.test(w); });
+        if (words.some(function(w) { return w.length > 15; })) return null;
+
+        // 3. Boost si le premier mot est un prénom connu → low → medium
+        if (names && words.length > 0) {
+          var firstName = words[0].toLowerCase();
+          if (names.has(firstName)) return 'medium';
+        }
+
+        return 'low';
+      },
       pseudonymPrefix: 'Personne',
       enabled: true
     },
@@ -255,9 +280,9 @@
     }
   ];
 
-  window.Anonymizator.PatternsGeneric = PATTERNS_GENERIC;
-  window.Anonymizator.Validators = Object.assign(
-    window.Anonymizator.Validators || {},
+  window.PseudoShield.PatternsGeneric = PATTERNS_GENERIC;
+  window.PseudoShield.Validators = Object.assign(
+    window.PseudoShield.Validators || {},
     { validateLuhn, validateSecuFR }
   );
 })();

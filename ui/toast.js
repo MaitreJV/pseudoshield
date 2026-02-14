@@ -3,10 +3,10 @@
 (function() {
   'use strict';
 
-  if (!window.Anonymizator) window.Anonymizator = {};
+  if (!window.PseudoShield) window.PseudoShield = {};
 
   const TOAST_DURATION = 4000;
-  const TOAST_ID = 'anonymizator-toast';
+  const TOAST_ID = 'pseudoshield-toast';
 
   function show(result) {
     const existing = document.getElementById(TOAST_ID);
@@ -14,7 +14,7 @@
 
     const toast = document.createElement('div');
     toast.id = TOAST_ID;
-    toast.className = 'anonymizator-toast';
+    toast.className = 'pseudoshield-toast';
 
     const details = [];
     const categoryCounts = result.categoryCounts || {};
@@ -34,16 +34,16 @@
     const art9Count = result.rgpdCategories?.art9 || 0;
 
     let rgpdIndicator = '';
-    if (art4Count > 0) rgpdIndicator += '<span class="anonymizator-toast-art4">' + art4Count + ' art.4</span>';
-    if (art9Count > 0) rgpdIndicator += '<span class="anonymizator-toast-art9">' + art9Count + ' art.9</span>';
+    if (art4Count > 0) rgpdIndicator += '<span class="pseudoshield-toast-art4">' + art4Count + ' art.4</span>';
+    if (art9Count > 0) rgpdIndicator += '<span class="pseudoshield-toast-art9">' + art9Count + ' art.9</span>';
 
     toast.innerHTML =
-      '<div class="anonymizator-toast-header">' +
-        '<span class="anonymizator-toast-check">✓</span> ' +
-        result.replacementsCount + ' données anonymisées' +
+      '<div class="pseudoshield-toast-header">' +
+        '<span class="pseudoshield-toast-check">✓</span> ' +
+        result.replacementsCount + ' donnees pseudonymisees' +
       '</div>' +
-      (details.length > 0 ? '<div class="anonymizator-toast-details">' + details.join(', ') + '</div>' : '') +
-      (rgpdIndicator ? '<div class="anonymizator-toast-rgpd">' + rgpdIndicator + '</div>' : '');
+      (details.length > 0 ? '<div class="pseudoshield-toast-details">' + details.join(', ') + '</div>' : '') +
+      (rgpdIndicator ? '<div class="pseudoshield-toast-rgpd">' + rgpdIndicator + '</div>' : '');
 
     toast.setAttribute('role', 'status');
     toast.setAttribute('aria-live', 'polite');
@@ -51,15 +51,15 @@
     document.body.appendChild(toast);
 
     requestAnimationFrame(() => {
-      toast.classList.add('anonymizator-toast-visible');
+      toast.classList.add('pseudoshield-toast-visible');
     });
 
     setTimeout(() => {
-      toast.classList.remove('anonymizator-toast-visible');
-      toast.classList.add('anonymizator-toast-hiding');
+      toast.classList.remove('pseudoshield-toast-visible');
+      toast.classList.add('pseudoshield-toast-hiding');
       setTimeout(() => toast.remove(), 300);
     }, TOAST_DURATION);
   }
 
-  window.Anonymizator.Toast = { show };
+  window.PseudoShield.Toast = { show };
 })();

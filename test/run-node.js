@@ -86,9 +86,9 @@ for (const mod of modules) {
 }
 
 // Exécuter les tests
-console.log('\n=== Anonymizator Pattern Tests ===\n');
+console.log('\n=== PseudoShield Pattern Tests ===\n');
 
-const results = sandbox.window.Anonymizator.TestPatterns.runTests();
+const results = sandbox.window.PseudoShield.TestPatterns.runTests();
 
 // Affichage
 for (const r of results.results) {
@@ -103,9 +103,9 @@ console.log(`\n  Total: ${results.total} | \x1b[32mPass: ${results.passed}\x1b[0
 
 // Bonus : test rapide du processeur complet sur le texte juridique
 (async () => {
-  await sandbox.window.Anonymizator.PseudonymEngine.init();
-  const procResult = await sandbox.window.Anonymizator.Processor.process(
-    sandbox.window.Anonymizator.TestData.juridiqueBelge
+  await sandbox.window.PseudoShield.PseudonymEngine.init();
+  const procResult = await sandbox.window.PseudoShield.Processor.process(
+    sandbox.window.PseudoShield.TestData.juridiqueBelge
   );
   console.log('=== Test processeur (texte juridique) ===\n');
   console.log(`  Detections: ${procResult.replacementsCount}`);

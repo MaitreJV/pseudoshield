@@ -1,13 +1,14 @@
 {
   "manifest_version": 3,
   "name": "__MSG_extensionName__",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "__MSG_extensionDescription__",
   "default_locale": "fr",
   "permissions": [
     "storage",
     "activeTab",
-    "clipboardRead"
+    "clipboardRead",
+    "alarms"
   ],
   "background": {
     "service_worker": "background.js"
@@ -26,13 +27,24 @@
       "matches": ["<all_urls>"],
       "js": [
         "utils/hash.js",
+        "utils/debounce.js",
+        "data/false-positive-bigrams.js",
+        "data/first-names-be-fr.js",
         "anonymizer/patterns-eu.js",
         "anonymizer/patterns-generic.js",
+        "anonymizer/patterns-digital.js",
         "anonymizer/detector.js",
+        "anonymizer/storage-manager.js",
         "anonymizer/pseudonym-engine.js",
         "anonymizer/processor.js",
         "anonymizer/rgpd-logger.js",
         "utils/clipboard.js",
+        "adapters/cursor-manager.js",
+        "adapters/adapter-generic.js",
+        "adapters/adapter-registry.js",
+        "adapters/adapter-prosemirror.js",
+        "adapters/adapter-textarea.js",
+        "adapters/adapter-quill.js",
         "utils/site-adapters.js",
         "ui/toast.js",
         "content.js"

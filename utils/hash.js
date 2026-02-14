@@ -3,7 +3,7 @@
 (function() {
   'use strict';
 
-  if (!window.Anonymizator) window.Anonymizator = {};
+  if (!window.PseudoShield) window.PseudoShield = {};
 
   /**
    * Calcule le hash SHA-256 d'une chaîne
@@ -18,7 +18,7 @@
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   }
 
-  window.Anonymizator.Hash = {
+  window.PseudoShield.Hash = {
     sha256
   };
 })();

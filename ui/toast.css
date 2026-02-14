@@ -1,5 +1,5 @@
 /* ui/toast.css */
-.anonymizator-toast {
+.pseudoshield-toast {
   position: fixed;
   bottom: 20px;
   right: 20px;
@@ -20,38 +20,38 @@
   border-left: 3px solid #00b894;
 }
 
-.anonymizator-toast-visible {
+.pseudoshield-toast-visible {
   opacity: 1;
   transform: translateY(0);
 }
 
-.anonymizator-toast-hiding {
+.pseudoshield-toast-hiding {
   opacity: 0;
   transform: translateY(10px);
 }
 
-.anonymizator-toast-header {
+.pseudoshield-toast-header {
   font-weight: 600;
   margin-bottom: 4px;
 }
 
-.anonymizator-toast-check {
+.pseudoshield-toast-check {
   color: #00b894;
 }
 
-.anonymizator-toast-details {
+.pseudoshield-toast-details {
   font-size: 11px;
   color: #b0b0b0;
   margin-bottom: 4px;
 }
 
-.anonymizator-toast-rgpd {
+.pseudoshield-toast-rgpd {
   display: flex;
   gap: 8px;
   margin-top: 4px;
 }
 
-.anonymizator-toast-art4 {
+.pseudoshield-toast-art4 {
   background: #00b894;
   color: #ffffff;
   padding: 2px 6px;
@@ -60,7 +60,7 @@
   font-weight: 600;
 }
 
-.anonymizator-toast-art9 {
+.pseudoshield-toast-art9 {
   background: #e74c3c;
   color: #ffffff;
   padding: 2px 6px;

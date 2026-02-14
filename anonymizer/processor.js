@@ -3,7 +3,7 @@
 (function() {
   'use strict';
 
-  if (!window.Anonymizator) window.Anonymizator = {};
+  if (!window.PseudoShield) window.PseudoShield = {};
 
   /**
    * Traite un texte : détecte et remplace les données personnelles
@@ -16,7 +16,7 @@
 
     if (!text || typeof text !== 'string') {
       return {
-        anonymizedText: text || '',
+        pseudonymizedText: text || '',
         originalTextLength: (text || '').length,
         replacementsCount: 0,
         detections: [],
@@ -27,11 +27,11 @@
     }
 
     // Étape 1 : Détection
-    const detections = window.Anonymizator.Detector.detect(text, options);
+    const detections = window.PseudoShield.Detector.detect(text, options);
 
     if (detections.length === 0) {
       return {
-        anonymizedText: text,
+        pseudonymizedText: text,
         originalTextLength: text.length,
         replacementsCount: 0,
         detections: [],
@@ -42,23 +42,23 @@
     }
 
     // Étape 2 : Pseudonymisation (remplacer de la fin vers le début pour conserver les positions)
-    let anonymizedText = text;
+    let pseudonymizedText = text;
     const processedDetections = [];
 
     for (let i = detections.length - 1; i >= 0; i--) {
       const detection = detections[i];
 
-      const pseudonym = await window.Anonymizator.PseudonymEngine.getPseudonym(
+      const pseudonym = await window.PseudoShield.PseudonymEngine.getPseudonym(
         detection.match,
         detection.pseudonymPrefix,
         detection.category,
         detection.rgpdCategory
       );
 
-      anonymizedText =
-        anonymizedText.substring(0, detection.start) +
+      pseudonymizedText =
+        pseudonymizedText.substring(0, detection.start) +
         '[' + pseudonym + ']' +
-        anonymizedText.substring(detection.end);
+        pseudonymizedText.substring(detection.end);
 
       processedDetections.unshift({
         ...detection,
@@ -67,12 +67,12 @@
     }
 
     // Étape 3 : Compteurs
-    const rgpdCategories = window.Anonymizator.Detector.countByRgpdCategory(detections);
-    const categoryCounts = window.Anonymizator.Detector.countByCategory(detections);
+    const rgpdCategories = window.PseudoShield.Detector.countByRgpdCategory(detections);
+    const categoryCounts = window.PseudoShield.Detector.countByCategory(detections);
     const processingTimeMs = performance.now() - startTime;
 
     return {
-      anonymizedText,
+      pseudonymizedText,
       originalTextLength: text.length,
       replacementsCount: detections.length,
       detections: processedDetections,
@@ -82,5 +82,5 @@
     };
   }
 
-  window.Anonymizator.Processor = { process };
+  window.PseudoShield.Processor = { process };
 })();

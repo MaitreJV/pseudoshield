@@ -1,27 +1,27 @@
 {
   "extensionName": {
-    "message": "Anonymizator",
+    "message": "PseudoShield",
     "description": "Nom de l'extension affiche dans le Chrome Web Store et le navigateur"
   },
   "extensionDescription": {
-    "message": "Anonymisez les donnees personnelles dans vos textes en un clic. Conforme RGPD.",
+    "message": "Pseudonymisez les donnees personnelles avant de les coller dans un chat LLM. Conforme RGPD (Art. 4(5)).",
     "description": "Description de l'extension pour le Chrome Web Store"
   },
   "toggleOn": {
-    "message": "Anonymisation activee",
-    "description": "Label quand l'anonymisation est active"
+    "message": "Pseudonymisation activee",
+    "description": "Label quand la pseudonymisation est active"
   },
   "toggleOff": {
-    "message": "Anonymisation desactivee",
-    "description": "Label quand l'anonymisation est inactive"
+    "message": "Pseudonymisation desactivee",
+    "description": "Label quand la pseudonymisation est inactive"
   },
   "sessionStats": {
     "message": "Statistiques de session",
     "description": "Titre de la section statistiques dans le popup"
   },
   "dataAnonymized": {
-    "message": "$COUNT$ donnee(s) anonymisee(s)",
-    "description": "Compteur de donnees anonymisees durant la session",
+    "message": "$COUNT$ donnee(s) pseudonymisee(s)",
+    "description": "Compteur de donnees pseudonymisees durant la session",
     "placeholders": {
       "count": {
         "content": "$1",
@@ -99,14 +99,14 @@
   },
   "exportJournal": {
     "message": "Exporter le journal",
-    "description": "Bouton pour exporter le journal d'anonymisation au format JSON"
+    "description": "Bouton pour exporter le journal de pseudonymisation au format JSON"
   },
   "resetSession": {
     "message": "Reinitialiser la session",
     "description": "Bouton pour remettre a zero les compteurs et la table de correspondance"
   },
   "optionsTitle": {
-    "message": "Options d'Anonymizator",
+    "message": "Options de PseudoShield",
     "description": "Titre de la page d'options"
   },
   "tabGeneral": {
@@ -146,8 +146,8 @@
     "description": "Bouton pour supprimer definitivement toutes les donnees stockees"
   },
   "toastMessage": {
-    "message": "$COUNT$ element(s) anonymise(s) sur cette page",
-    "description": "Message toast affiche apres anonymisation d'une page",
+    "message": "$COUNT$ element(s) pseudonymise(s) sur cette page",
+    "description": "Message toast affiche apres pseudonymisation d'une page",
     "placeholders": {
       "count": {
         "content": "$1",
@@ -169,10 +169,10 @@
   },
   "allSites": {
     "message": "Tous les sites",
-    "description": "Option pour appliquer l'anonymisation sur tous les sites"
+    "description": "Option pour appliquer la pseudonymisation sur tous les sites"
   },
   "version": {
-    "message": "v1.0.0",
+    "message": "v2.0.0",
     "description": "Version actuelle de l'extension"
   },
   "credits": {

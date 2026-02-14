@@ -3,21 +3,29 @@
 (function() {
   'use strict';
 
-  if (!window.Anonymizator) window.Anonymizator = {};
+  if (!window.PseudoShield) window.PseudoShield = {};
+
+  // Cache des regex compilées — évite de recréer 29 objets RegExp à chaque paste
+  const compiledRegexCache = new Map();
+
+  // Niveaux de confiance et scores associes pour le filtrage par seuil
+  const CONFIDENCE_LEVELS = { high: 3, medium: 2, low: 1 };
 
   /**
-   * Détecte toutes les données personnelles dans un texte
-   * @param {string} text - Texte à analyser
-   * @param {Object} [options] - Options de détection
-   * @param {string[]} [options.enabledPatterns] - IDs des patterns à utiliser (tous par défaut)
-   * @returns {Detection[]} Liste des détections triées par position
+   * Detecte toutes les donnees personnelles dans un texte
+   * @param {string} text - Texte a analyser
+   * @param {Object} [options] - Options de detection
+   * @param {string[]} [options.enabledPatterns] - IDs des patterns a utiliser (tous par defaut)
+   * @param {string} [options.confidenceThreshold] - Seuil minimum de confiance ('high', 'medium', 'low')
+   * @returns {Detection[]} Liste des detections triees par position
    */
   function detect(text, options = {}) {
     if (!text || typeof text !== 'string') return [];
 
     const allPatterns = [
-      ...(window.Anonymizator.PatternsEU || []),
-      ...(window.Anonymizator.PatternsGeneric || [])
+      ...(window.PseudoShield.PatternsEU || []),
+      ...(window.PseudoShield.PatternsGeneric || []),
+      ...(window.PseudoShield.PatternsDigital || [])
     ];
 
     const enabledPatterns = allPatterns.filter(p => {
@@ -29,22 +37,35 @@
     const detections = [];
 
     for (const pattern of enabledPatterns) {
-      // Réinitialiser le lastIndex de la regex (flag 'g')
-      const regex = new RegExp(pattern.regex.source, pattern.regex.flags);
+      // Recuperer la regex depuis le cache ou la compiler une seule fois
+      let regex = compiledRegexCache.get(pattern.id);
+      if (!regex) {
+        regex = new RegExp(pattern.regex.source, pattern.regex.flags);
+        compiledRegexCache.set(pattern.id, regex);
+      }
+      regex.lastIndex = 0;
 
       let match;
       while ((match = regex.exec(text)) !== null) {
         const matchText = match[0];
 
-        // Appliquer le validateur si défini
+        // Appliquer le validateur si defini
         let confidence = pattern.confidence;
         if (pattern.validator && !pattern.validator(matchText)) {
           if (pattern.softValidation) {
-            // Validation souple : garder le match mais réduire la confiance
+            // Validation souple : garder le match mais reduire la confiance
             confidence = 'medium';
           } else {
             continue;
           }
+        }
+
+        // Appliquer le confidenceAdjuster si defini
+        // Retourne null pour rejeter, ou un niveau de confiance ajuste
+        if (pattern.confidenceAdjuster) {
+          const adjusted = pattern.confidenceAdjuster(matchText);
+          if (adjusted === null) continue;
+          confidence = adjusted;
         }
 
         detections.push({
@@ -60,11 +81,19 @@
       }
     }
 
-    // Trier par position de début
-    detections.sort((a, b) => a.start - b.start);
+    // Filtrer par seuil de confiance (defaut : 'low' = tout accepter)
+    const threshold = options.confidenceThreshold || 'low';
+    const thresholdScore = CONFIDENCE_LEVELS[threshold] || 1;
 
-    // Résoudre les chevauchements
-    return resolveOverlaps(detections);
+    const filtered = detections.filter(d =>
+      (CONFIDENCE_LEVELS[d.confidence] || 0) >= thresholdScore
+    );
+
+    // Trier par position de debut
+    filtered.sort((a, b) => a.start - b.start);
+
+    // Resoudre les chevauchements
+    return resolveOverlaps(filtered);
   }
 
   /**
@@ -127,7 +156,7 @@
     }, {});
   }
 
-  window.Anonymizator.Detector = {
+  window.PseudoShield.Detector = {
     detect,
     countByRgpdCategory,
     countByCategory

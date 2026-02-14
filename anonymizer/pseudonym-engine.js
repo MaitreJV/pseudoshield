@@ -3,7 +3,7 @@
 (function() {
   'use strict';
 
-  if (!window.Anonymizator) window.Anonymizator = {};
+  if (!window.PseudoShield) window.PseudoShield = {};
 
   // Compteurs par préfixe pour générer des pseudonymes uniques
   let counters = {};
@@ -25,13 +25,13 @@
     if (initialized) return;
 
     try {
-      const result = await chrome.storage.local.get(['anonymizator_table', 'anonymizator_counters']);
-      persistedTable = result.anonymizator_table || {};
-      counters = result.anonymizator_counters || {};
+      const result = await chrome.storage.local.get(['pseudoshield_table', 'pseudoshield_counters']);
+      persistedTable = result.pseudoshield_table || {};
+      counters = result.pseudoshield_counters || {};
       initialized = true;
-      console.log('[Anonymizator] Moteur de pseudonymisation initialisé,', Object.keys(persistedTable).length, 'entrées chargées');
+      console.log('[PseudoShield] Moteur de pseudonymisation initialisé,', Object.keys(persistedTable).length, 'entrées chargées');
     } catch (e) {
-      console.error('[Anonymizator] Erreur initialisation pseudonym-engine:', e);
+      console.error('[PseudoShield] Erreur initialisation pseudonym-engine:', e);
       persistedTable = {};
       counters = {};
       initialized = true;
@@ -49,7 +49,7 @@
   async function getPseudonym(original, prefix, category, rgpdCategory) {
     await init();
 
-    const hash = await window.Anonymizator.Hash.sha256(original.trim().toLowerCase());
+    const hash = await window.PseudoShield.Hash.sha256(original.trim().toLowerCase());
 
     // Vérifier si déjà connu
     if (persistedTable[hash]) {
@@ -92,11 +92,11 @@
   async function save() {
     try {
       await chrome.storage.local.set({
-        anonymizator_table: persistedTable,
-        anonymizator_counters: counters
+        pseudoshield_table: persistedTable,
+        pseudoshield_counters: counters
       });
     } catch (e) {
-      console.error('[Anonymizator] Erreur sauvegarde table:', e);
+      console.error('[PseudoShield] Erreur sauvegarde table:', e);
     }
   }
 
@@ -144,8 +144,8 @@
     counters = {};
     volatileMap.clear();
     persistedTable = {};
-    await chrome.storage.local.remove(['anonymizator_table', 'anonymizator_counters']);
-    console.log('[Anonymizator] Table de correspondance réinitialisée');
+    await chrome.storage.local.remove(['pseudoshield_table', 'pseudoshield_counters']);
+    console.log('[PseudoShield] Table de correspondance réinitialisée');
   }
 
   /**
@@ -157,7 +157,7 @@
     return volatileMap.has(pseudonym);
   }
 
-  window.Anonymizator.PseudonymEngine = {
+  window.PseudoShield.PseudonymEngine = {
     init,
     getPseudonym,
     revealOriginal,

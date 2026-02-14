@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Anonymizator — Test Runner</title>
+  <title>PseudoShield — Test Runner</title>
   <style>
     /* ============================
        Base & Reset
@@ -515,9 +515,9 @@
   <div class="app-header">
     <div class="app-title">
       <img src="../icons/icon-32.png" alt="" style="width: 24px; height: 24px;">
-      <span>Anonymizator <span class="app-subtitle">Test Runner</span></span>
+      <span>PseudoShield <span class="app-subtitle">Test Runner</span></span>
     </div>
-    <div style="font-size: 11px; color: #555;">v1.0.0 &middot; lawgitech.eu</div>
+    <div style="font-size: 11px; color: #555;">v2.0.0 &middot; lawgitech.eu</div>
   </div>
 
   <div class="main-container">
@@ -531,6 +531,7 @@
         <button class="btn btn-default" onclick="loadText('medical')">Medical (art.9)</button>
         <button class="btn btn-default" onclick="loadText('contratCommercial')">Contrat</button>
         <button class="btn btn-default" onclick="loadText('sansDonn')">Sans donnees</button>
+        <button class="btn btn-default" onclick="loadText('numerique')">Numerique</button>
       </div>
 
       <div class="toolbar-separator"></div>
@@ -662,8 +663,12 @@
        Load Anonymizer Modules
        ============================ -->
   <script src="../utils/hash.js"></script>
+  <script src="../utils/debounce.js"></script>
+  <script src="../data/false-positive-bigrams.js"></script>
+  <script src="../data/first-names-be-fr.js"></script>
   <script src="../anonymizer/patterns-eu.js"></script>
   <script src="../anonymizer/patterns-generic.js"></script>
+  <script src="../anonymizer/patterns-digital.js"></script>
   <script src="../anonymizer/detector.js"></script>
   <script src="../anonymizer/pseudonym-engine.js"></script>
   <script src="../anonymizer/processor.js"></script>
@@ -687,7 +692,7 @@
      * Charge un texte de test dans le panneau original
      */
     function loadText(key) {
-      const data = window.Anonymizator.TestData[key];
+      const data = window.PseudoShield.TestData[key];
       if (!data) {
         console.error('[TestRunner] Texte introuvable:', key);
         return;
@@ -727,10 +732,10 @@
 
       try {
         // Reinitialiser le moteur pour un test propre
-        await window.Anonymizator.PseudonymEngine.reset();
+        await window.PseudoShield.PseudonymEngine.reset();
 
         // Lancer le traitement
-        const result = await window.Anonymizator.Processor.process(currentText);
+        const result = await window.PseudoShield.Processor.process(currentText);
         lastResult = result;
 
         // Afficher le texte anonymise avec colorisation
@@ -858,7 +863,7 @@
       panel.classList.add('visible');
 
       try {
-        const results = window.Anonymizator.TestPatterns.runTests();
+        const results = window.PseudoShield.TestPatterns.runTests();
 
         // Afficher le resume
         summary.innerHTML =
@@ -893,7 +898,7 @@
       lastResult = null;
 
       // Reinitialiser le moteur
-      await window.Anonymizator.PseudonymEngine.reset();
+      await window.PseudoShield.PseudonymEngine.reset();
 
       // Reinitialiser l'affichage
       const paneOriginal = document.getElementById('pane-original');

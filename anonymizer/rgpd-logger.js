@@ -3,9 +3,9 @@
 (function() {
   'use strict';
 
-  if (!window.Anonymizator) window.Anonymizator = {};
+  if (!window.PseudoShield) window.PseudoShield = {};
 
-  const STORAGE_KEY = 'anonymizator_journal';
+  const STORAGE_KEY = 'pseudoshield_journal';
   let journal = [];
   let loaded = false;
 
@@ -16,7 +16,7 @@
       journal = result[STORAGE_KEY] || [];
       loaded = true;
     } catch (e) {
-      console.error('[Anonymizator] Erreur chargement journal:', e);
+      console.error('[PseudoShield] Erreur chargement journal:', e);
       journal = [];
       loaded = true;
     }
@@ -41,17 +41,26 @@
       categoriesAffected: result.rgpdCategories,
       categoryCounts: result.categoryCounts,
       textLengthOriginal: result.originalTextLength,
-      textLengthAnonymized: result.anonymizedText.length,
+      textLengthAnonymized: result.pseudonymizedText.length,
       processingTimeMs: Math.round(result.processingTimeMs),
       sessionId: getSessionId()
     };
 
     journal.push(entry);
 
-    try {
-      await chrome.storage.local.set({ [STORAGE_KEY]: journal });
-    } catch (e) {
-      console.error('[Anonymizator] Erreur sauvegarde journal:', e);
+    // Utiliser le StorageManager pour la sauvegarde securisee avec gestion quota
+    if (window.PseudoShield.StorageManager) {
+      const writeResult = await window.PseudoShield.StorageManager.safeSet({ [STORAGE_KEY]: journal });
+      if (!writeResult.success) {
+        console.error('[PseudoShield] Erreur sauvegarde journal:', writeResult.error);
+      }
+    } else {
+      // Fallback si StorageManager non charge
+      try {
+        await chrome.storage.local.set({ [STORAGE_KEY]: journal });
+      } catch (e) {
+        console.error('[PseudoShield] Erreur sauvegarde journal:', e);
+      }
     }
   }
 
@@ -72,7 +81,7 @@
 
   async function exportCSV() {
     await load();
-    const headers = ['Timestamp', 'URL', 'Patterns', 'Remplacements', 'Art.4', 'Art.9', 'Taille originale', 'Taille anonymisée', 'Temps (ms)', 'Session'];
+    const headers = ['Timestamp', 'URL', 'Patterns', 'Remplacements', 'Art.4', 'Art.9', 'Taille originale', 'Taille pseudonymisee', 'Temps (ms)', 'Session'];
     const rows = journal.map(e => [
       e.timestamp,
       e.url,
@@ -103,9 +112,9 @@
     loaded = true;
     try {
       await chrome.storage.local.remove(STORAGE_KEY);
-      console.log('[Anonymizator] Journal RGPD purgé');
+      console.log('[PseudoShield] Journal RGPD purgé');
     } catch (e) {
-      console.error('[Anonymizator] Erreur purge journal:', e);
+      console.error('[PseudoShield] Erreur purge journal:', e);
     }
   }
 
@@ -122,7 +131,7 @@
     };
   }
 
-  window.Anonymizator.RgpdLogger = {
+  window.PseudoShield.RgpdLogger = {
     log,
     getEntries,
     getFiltered,
