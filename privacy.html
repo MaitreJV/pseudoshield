@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PseudoShield — Politique de confidentialite</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #1a1a2e;
+      color: #e0e0e0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      line-height: 1.7;
+      padding: 24px;
+    }
+
+    .privacy-container {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    /* --- Header --- */
+    .privacy-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 28px;
+    }
+
+    .privacy-header img {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+    }
+
+    .privacy-header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .privacy-header .version {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      background: rgba(0, 184, 148, 0.15);
+      color: #00b894;
+      border: 1px solid rgba(0, 184, 148, 0.3);
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* --- Summary card --- */
+    .summary-card {
+      background: rgba(0, 184, 148, 0.08);
+      border: 1px solid rgba(0, 184, 148, 0.2);
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-bottom: 28px;
+    }
+
+    .summary-card h2 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #00b894;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 10px;
+    }
+
+    .summary-card ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .summary-card li {
+      padding: 4px 0;
+      padding-left: 22px;
+      position: relative;
+      font-size: 13px;
+    }
+
+    .summary-card li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: #00b894;
+      font-weight: 700;
+    }
+
+    /* --- Sections --- */
+    .section {
+      margin-bottom: 28px;
+    }
+
+    .section h2 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .section h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.8);
+      margin: 12px 0 6px;
+    }
+
+    .section p {
+      margin-bottom: 8px;
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 13px;
+    }
+
+    .section ul {
+      margin: 6px 0 10px 20px;
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 13px;
+    }
+
+    .section li {
+      margin-bottom: 4px;
+    }
+
+    /* --- Legal reference badges --- */
+    .ref {
+      display: inline-flex;
+      align-items: center;
+      padding: 1px 6px;
+      background: rgba(108, 92, 231, 0.15);
+      color: #a29bfe;
+      border: 1px solid rgba(108, 92, 231, 0.3);
+      border-radius: 3px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: 'Consolas', 'Monaco', monospace;
+      white-space: nowrap;
+    }
+
+    /* --- Table --- */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin: 10px 0;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .data-table th {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 10px 12px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: rgba(255, 255, 255, 0.6);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .data-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    .data-table tbody tr:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    /* --- Warning box (art. 9) --- */
+    .warning-box {
+      background: rgba(231, 76, 60, 0.08);
+      border: 1px solid rgba(231, 76, 60, 0.2);
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin: 10px 0;
+    }
+
+    .warning-box strong {
+      color: #e74c3c;
+    }
+
+    .warning-box p {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    /* --- Footer --- */
+    .privacy-footer {
+      text-align: center;
+      padding: 20px 0 8px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.3);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      margin-top: 32px;
+    }
+
+    .privacy-footer a {
+      color: #00b894;
+      text-decoration: none;
+    }
+
+    .privacy-footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* --- Links --- */
+    a {
+      color: #00b894;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* --- Responsive --- */
+    @media (max-width: 600px) {
+      body { padding: 14px; }
+      .privacy-header h1 { font-size: 18px; }
+      .data-table { font-size: 12px; }
+      .data-table th, .data-table td { padding: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="privacy-container">
+
+    <!-- Header -->
+    <div class="privacy-header">
+      <img src="icons/icon-48.png" alt="">
+      <h1>Politique de confidentialite</h1>
+      <span class="version">v2.0.0</span>
+    </div>
+
+    <!-- Resume (layered approach — WP29/EDPB transparency guidelines) -->
+    <div class="summary-card">
+      <h2>En bref</h2>
+      <ul>
+        <li>PseudoShield traite vos donnees <strong>exclusivement en local</strong> sur votre appareil</li>
+        <li><strong>Aucune donnee</strong> n'est transmise a un serveur externe, ni a l'editeur</li>
+        <li><strong>Aucun compte</strong> n'est necessaire, aucune telemetrie n'est collectee</li>
+        <li>Vous etes le <strong>responsable de traitement</strong> de vos propres donnees</li>
+        <li>La suppression de vos donnees est possible a tout moment depuis les options</li>
+      </ul>
+    </div>
+
+    <!-- 1. Editeur -->
+    <div class="section">
+      <h2>1. Editeur de l'extension</h2>
+      <p>PseudoShield est edite par <strong>Lawgitech</strong>, cabinet d'avocat specialise en droit de l'intelligence artificielle et protection des donnees.</p>
+      <ul>
+        <li><strong>Responsable :</strong> Me Jeoffrey Vigneron, avocat au Barreau de Bruxelles</li>
+        <li><strong>Site :</strong> <a href="https://lawgitech.eu" target="_blank" rel="noopener">lawgitech.eu</a></li>
+        <li><strong>Contact :</strong> contact@lawgitech.eu</li>
+      </ul>
+      <p>L'editeur fournit l'outil mais <strong>n'accede a aucune donnee</strong> traitee par l'extension. Vous etes le responsable de traitement au sens de l'article 4(7) du RGPD pour les donnees que vous pseudonymisez.</p>
+    </div>
+
+    <!-- 2. Finalite -->
+    <div class="section">
+      <h2>2. Finalite et fonctionnement <span class="ref">Art. 5.1.b RGPD</span></h2>
+      <p>PseudoShield a pour finalite unique la <strong>pseudonymisation</strong> au sens de l'article 4(5) du RGPD : remplacer les donnees a caractere personnel par des pseudonymes, de maniere a ce que les donnees ne puissent plus etre attribuees a une personne sans informations supplementaires (table de correspondance).</p>
+
+      <h3>Comment fonctionne l'extension</h3>
+      <ul>
+        <li><strong>Interception :</strong> lorsque vous collez du texte dans un champ de saisie, l'extension intercepte le contenu avant insertion</li>
+        <li><strong>Detection :</strong> des expressions regulieres (regex) identifient les donnees personnelles (noms, NISS, IBAN, emails, etc.) cote client, sans appel reseau</li>
+        <li><strong>Remplacement :</strong> chaque donnee detectee est remplacee par un pseudonyme deterministe genere via SHA-256</li>
+        <li><strong>Stockage local :</strong> la table de correspondance (pseudonyme ↔ donnee originale) est conservee dans <code>chrome.storage.local</code>, exclusivement sur votre appareil</li>
+      </ul>
+
+      <p><strong>Important :</strong> la pseudonymisation n'est pas une anonymisation. Les donnees pseudonymisees <strong>restent des donnees a caractere personnel</strong> au sens du RGPD (considerant 26), car la reidentification est possible via la table de correspondance.</p>
+    </div>
+
+    <!-- 3. Categories de donnees -->
+    <div class="section">
+      <h2>3. Categories de donnees traitees <span class="ref">Art. 4(1) RGPD</span></h2>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Categorie</th>
+            <th>Exemples</th>
+            <th>Art. RGPD</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Identite</td>
+            <td>Noms, prenoms, carte d'identite, passeport</td>
+            <td><span class="ref">Art. 4</span></td>
+          </tr>
+          <tr>
+            <td>Identifiants nationaux</td>
+            <td>NISS, BCE, TVA, INAMI</td>
+            <td><span class="ref">Art. 4</span></td>
+          </tr>
+          <tr>
+            <td>Contact</td>
+            <td>Email, telephone, adresse</td>
+            <td><span class="ref">Art. 4</span></td>
+          </tr>
+          <tr>
+            <td>Financier</td>
+            <td>IBAN</td>
+            <td><span class="ref">Art. 4</span></td>
+          </tr>
+          <tr>
+            <td>Numerique</td>
+            <td>Coordonnees GPS, URLs avec PII, pseudos sociaux</td>
+            <td><span class="ref">Art. 4</span></td>
+          </tr>
+          <tr>
+            <td>Sante</td>
+            <td>Pathologies, traitements medicaux</td>
+            <td><span class="ref">Art. 9</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="warning-box">
+        <p><strong>Donnees sensibles (Art. 9) :</strong> PseudoShield peut detecter des donnees de sante (pathologies, traitements). Ces donnees beneficient d'une protection renforcee au sens de l'article 9 du RGPD. Le traitement repose sur votre <strong>consentement explicite</strong> (Art. 9.2.a), materialise par l'activation du pattern correspondant dans les options.</p>
+      </div>
+    </div>
+
+    <!-- 4. Stockage -->
+    <div class="section">
+      <h2>4. Stockage et securite <span class="ref">Art. 5.1.f / Art. 32 RGPD</span></h2>
+
+      <h3>Ou sont stockees vos donnees ?</h3>
+      <p>Toutes les donnees sont stockees dans <code>chrome.storage.local</code>, un espace de stockage local fourni par le navigateur Chrome. Ces donnees :</p>
+      <ul>
+        <li>Restent <strong>exclusivement sur votre appareil</strong></li>
+        <li>Ne sont <strong>jamais transmises</strong> a un serveur, une API ou un tiers</li>
+        <li>Ne sont <strong>pas synchronisees</strong> entre vos appareils (sauf si vous activez la synchronisation Chrome)</li>
+        <li>Sont <strong>isolees</strong> des autres extensions et sites web par le navigateur</li>
+      </ul>
+
+      <h3>Mesures de securite</h3>
+      <ul>
+        <li><strong>Hachage SHA-256 :</strong> les pseudonymes sont generes via l'API Web Crypto du navigateur</li>
+        <li><strong>Pas de transmission reseau :</strong> aucune requete HTTP/HTTPS n'est effectuee par l'extension</li>
+        <li><strong>Isolation du navigateur :</strong> le sandboxing de Chrome protege les donnees stockees</li>
+        <li><strong>Quota surveille :</strong> un gestionnaire de stockage previent le depassement de capacite</li>
+      </ul>
+
+      <h3>Duree de conservation</h3>
+      <p>Les donnees sont conservees jusqu'a :</p>
+      <ul>
+        <li>Votre suppression manuelle (bouton "Reinitialiser" ou "Purger le journal")</li>
+        <li>La desinstallation de l'extension</li>
+        <li>L'effacement des donnees du navigateur</li>
+      </ul>
+    </div>
+
+    <!-- 5. Pas de transfert -->
+    <div class="section">
+      <h2>5. Destinataires et transferts <span class="ref">Art. 13.1.e-f RGPD</span></h2>
+      <p><strong>Aucun destinataire.</strong> L'extension ne communique avec aucun serveur, aucune API, aucun tiers. Aucune donnee n'est partagee, vendue ou transferee.</p>
+      <p><strong>Aucun transfert hors UE.</strong> Le traitement etant exclusivement local, aucun transfert international n'a lieu.</p>
+      <p><strong>Aucun sous-traitant.</strong> L'editeur n'intervient pas dans le traitement de vos donnees. Il n'y a pas de relation de sous-traitance au sens de l'article 28 du RGPD.</p>
+    </div>
+
+    <!-- 6. Droits -->
+    <div class="section">
+      <h2>6. Vos droits <span class="ref">Art. 15-22 RGPD</span></h2>
+      <p>En tant que responsable de traitement de vos propres donnees, vous exercez directement vos droits via l'interface de l'extension :</p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Droit</th>
+            <th>Comment l'exercer</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Acces</strong> (Art. 15)</td>
+            <td>Consultez la table de correspondance dans les options</td>
+          </tr>
+          <tr>
+            <td><strong>Rectification</strong> (Art. 16)</td>
+            <td>Modifiez ou supprimez des entrees individuelles</td>
+          </tr>
+          <tr>
+            <td><strong>Effacement</strong> (Art. 17)</td>
+            <td>Bouton "Reinitialiser session" ou "Purger le journal"</td>
+          </tr>
+          <tr>
+            <td><strong>Limitation</strong> (Art. 18)</td>
+            <td>Desactivez des patterns individuels dans les options</td>
+          </tr>
+          <tr>
+            <td><strong>Portabilite</strong> (Art. 20)</td>
+            <td>Exportez vos donnees en CSV ou JSON depuis le journal</td>
+          </tr>
+          <tr>
+            <td><strong>Opposition</strong> (Art. 21)</td>
+            <td>Desactivez l'extension ou des patterns specifiques</td>
+          </tr>
+          <tr>
+            <td><strong>Retrait du consentement</strong></td>
+            <td>Desinstallez l'extension a tout moment</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 7. Decision automatisee -->
+    <div class="section">
+      <h2>7. Decision automatisee <span class="ref">Art. 22 RGPD</span></h2>
+      <p>PseudoShield effectue une <strong>detection automatisee</strong> de donnees personnelles via des expressions regulieres (regex). Cette detection :</p>
+      <ul>
+        <li>Utilise des <strong>patterns predetermines</strong> (noms, numeros, emails, etc.) sans apprentissage automatique</li>
+        <li>Attribue un <strong>niveau de confiance</strong> (haute, moyenne, basse) a chaque detection</li>
+        <li>Peut etre <strong>configuree</strong> par l'utilisateur (seuil de confiance, patterns actifs)</li>
+        <li>Ne produit <strong>aucun effet juridique</strong> ni consequence significative pour les personnes concernees — la pseudonymisation vise au contraire a les proteger</li>
+      </ul>
+    </div>
+
+    <!-- 8. Cookies et telemetrie -->
+    <div class="section">
+      <h2>8. Cookies, telemetrie et analytics</h2>
+      <p><strong>Aucun.</strong> PseudoShield n'utilise aucun cookie, aucun traceur, aucune telemetrie, aucun outil d'analytics. L'extension ne collecte aucune information sur votre utilisation.</p>
+    </div>
+
+    <!-- 9. Autorite de controle -->
+    <div class="section">
+      <h2>9. Autorite de controle <span class="ref">Art. 77 RGPD</span></h2>
+      <p>Vous disposez du droit d'introduire une reclamation aupres de l'autorite de protection des donnees competente :</p>
+      <ul>
+        <li><strong>Belgique :</strong> Autorite de protection des donnees (APD) — <a href="https://www.autoriteprotectiondonnees.be" target="_blank" rel="noopener">autoriteprotectiondonnees.be</a></li>
+        <li><strong>France :</strong> Commission nationale de l'informatique et des libertes (CNIL) — <a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a></li>
+        <li><strong>Autre pays UE :</strong> l'autorite de protection des donnees de votre pays de residence</li>
+      </ul>
+    </div>
+
+    <!-- 10. Modifications -->
+    <div class="section">
+      <h2>10. Modifications de cette politique</h2>
+      <p>Cette politique peut etre mise a jour pour refleter les evolutions de l'extension ou de la reglementation. La version en vigueur est toujours accessible depuis l'extension. Toute modification substantielle sera signalee dans les notes de mise a jour.</p>
+      <p><strong>Derniere mise a jour :</strong> 14 fevrier 2026</p>
+    </div>
+
+    <!-- 11. Bases legales -->
+    <div class="section">
+      <h2>11. References juridiques</h2>
+      <ul>
+        <li>Reglement (UE) 2016/679 (RGPD) — articles 4(5), 5, 6, 9, 12-22, 25, 32, 77</li>
+        <li>Guidelines WP260 rev.01 — Transparence (WP29, adoptees par l'EDPB)</li>
+        <li>APD, decision ANO 06-2019 — obligations d'information Art. 13</li>
+        <li>APD, decision ANO 106-2022 — accessibilite de la politique de confidentialite</li>
+        <li>Considerant 26 RGPD — pseudonymisation vs anonymisation</li>
+      </ul>
+    </div>
+
+    <!-- Footer -->
+    <div class="privacy-footer">
+      PseudoShield v2.0.0 · <a href="https://lawgitech.eu" target="_blank" rel="noopener">lawgitech.eu</a>
+    </div>
+
+  </div>
+</body>
+</html>
