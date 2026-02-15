@@ -257,14 +257,27 @@
       enabled: true
     },
 
-    // 14. Numéro BCE
+    // 14. Numéro BCE (avec contexte proche ou éloigné)
     {
       id: 'BCE_BE',
       label: 'BCE (Banque Carrefour Entreprises)',
       category: 'financier',
       rgpdCategory: 'art4',
       confidence: 'high',
-      regex: /(?:BCE|banque[\s-]?carrefour|entreprise|n°[\s]?d'entreprise)\s*:?\s*(0\d{3}[.\s]?\d{3}[.\s]?\d{3})\b/gi,
+      regex: /(?:BCE|banque[\s-]?carrefour|n[°o][\s]?d'entreprise)[\s\w']*?:?\s*(0\d{3}[.\s]?\d{3}[.\s]?\d{3})\b/gi,
+      pseudonymPrefix: 'BCE',
+      enabled: true
+    },
+
+    // 14b. Numéro BCE standalone (format 0XXX.XXX.XXX sans contexte)
+    // Confiance medium — le format seul est ambigu, mais le préfixe 0 + 10 chiffres est typique BCE
+    {
+      id: 'BCE_BE_STANDALONE',
+      label: 'BCE (format seul)',
+      category: 'financier',
+      rgpdCategory: 'art4',
+      confidence: 'medium',
+      regex: /\b(0\d{3}\.\d{3}\.\d{3})\b/g,
       pseudonymPrefix: 'BCE',
       enabled: true
     },

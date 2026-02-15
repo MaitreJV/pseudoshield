@@ -41,3 +41,11 @@ coverage/
 tmp/
 temp/
 *.tmp
+
+# Dev-only folders
+.claude/
+docs/
+Brand/
+
+# Dev scripts
+icons/generate-icons.py

@@ -64,7 +64,7 @@
   }
 
   // Civilités pour la détection de noms propres (avec point optionnel pour Dr./Pr./Prof.)
-  const CIVILITES = '(?:M\\.|Mme|Mlle|Maître|Maitre|Me|Mr\\.?|Mrs\\.?|Ms\\.?|Dr\\.?|Pr\\.?|Prof\\.?)';
+  const CIVILITES = '(?:Monsieur|Madame|Mademoiselle|M\\.|Mme|Mlle|Maître|Maitre|Me|Mr\\.?|Mrs\\.?|Ms\\.?|Dr\\.?|Pr\\.?|Prof\\.?)';
 
   // Contextes simples précédant un nom (un seul mot)
   const CONTEXTES_NOM = '(?:Nom|Prénom|Prenom|Client|Partie|Requérant|Requerant|Défendeur|Defendeur|Demandeur|Plaignant|Intimé|Intime|Appelant|Signataire|Représenté|Represente|Bénéficiaire|Beneficiaire|Destinataire|Expéditeur|Expediteur|Patient|Médecin|Medecin|Avocat|Notaire|Juge|soussigné|soussignée|soussigne|dénommé|dénommée|denomme|Cher|Chère|Chere)';
