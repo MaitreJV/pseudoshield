@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PseudoShield — Extension Chrome de pseudonymisation RGPD</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #1a1a2e;
+      color: #e0e0e0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      line-height: 1.7;
+      padding: 24px;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 28px;
+    }
+
+    .header img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .header .version {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      background: rgba(0, 184, 148, 0.15);
+      color: #00b894;
+      border: 1px solid rgba(0, 184, 148, 0.3);
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .description {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.85);
+      margin-bottom: 28px;
+    }
+
+    .summary-card {
+      background: rgba(0, 184, 148, 0.08);
+      border: 1px solid rgba(0, 184, 148, 0.2);
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-bottom: 28px;
+    }
+
+    .summary-card h2 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #00b894;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 10px;
+    }
+
+    .summary-card ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .summary-card li {
+      padding: 4px 0;
+      padding-left: 22px;
+      position: relative;
+      font-size: 13px;
+    }
+
+    .summary-card li::before {
+      content: '\2713';
+      position: absolute;
+      left: 0;
+      color: #00b894;
+      font-weight: 700;
+    }
+
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .link-card {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      transition: opacity 0.2s;
+    }
+
+    .link-card:hover {
+      opacity: 0.85;
+      text-decoration: none;
+    }
+
+    .link-privacy {
+      background: rgba(108, 92, 231, 0.15);
+      border: 1px solid rgba(108, 92, 231, 0.3);
+      color: #a29bfe;
+    }
+
+    .link-github {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #e0e0e0;
+    }
+
+    .link-store {
+      background: rgba(0, 184, 148, 0.15);
+      border: 1px solid rgba(0, 184, 148, 0.3);
+      color: #00b894;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 20px 0 8px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.3);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      margin-top: 32px;
+    }
+
+    .footer a {
+      color: #00b894;
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    a {
+      color: #00b894;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 14px; }
+      .header h1 { font-size: 18px; }
+      .links { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="header">
+      <img src="icons/icon-48.png" alt="PseudoShield">
+      <h1>PseudoShield</h1>
+      <span class="version">v2.0.0</span>
+    </div>
+
+    <p class="description">Extension Chrome de pseudonymisation automatique conforme au RGPD. Protegez vos donnees personnelles avant de les partager avec les assistants IA.</p>
+
+    <div class="summary-card">
+      <h2>Fonctionnalites</h2>
+      <ul>
+        <li>Pseudonymisation automatique au collage (Ctrl+V) sur 6 plateformes IA</li>
+        <li>Detection de 35+ types de donnees personnelles (NISS, IBAN, emails, noms, adresses...)</li>
+        <li>Pseudonymes deterministes via SHA-256 — reversibles via la table de correspondance</li>
+        <li>Traitement 100% local — aucune donnee transmise a un serveur</li>
+        <li>Journal RGPD Art. 30 avec export CSV/JSON</li>
+        <li>Zero cookie, zero telemetrie, zero compte requis</li>
+      </ul>
+    </div>
+
+    <div class="links">
+      <a href="privacy.html" class="link-card link-privacy">Politique de confidentialite</a>
+      <a href="https://github.com/MaitreJV/pseudoshield" class="link-card link-github" target="_blank" rel="noopener">Code source (GitHub)</a>
+    </div>
+
+    <div class="footer">
+      PseudoShield v2.0.0 · <a href="https://lawgitech.eu" target="_blank" rel="noopener">Lawgitech (Digilaw SRL)</a>
+    </div>
+
+  </div>
+</body>
+</html>
