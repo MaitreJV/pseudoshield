@@ -11,8 +11,18 @@
     "clipboardRead",
     "alarms"
   ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "pseudoshield@lawgitech.eu",
+      "strict_min_version": "121.0",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
+  },
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "scripts": ["background.js"]
   },
   "action": {
     "default_popup": "popup.html",
@@ -66,6 +76,7 @@
     "16": "icons/icon-16.png",
     "32": "icons/icon-32.png",
     "48": "icons/icon-48.png",
+    "96": "icons/icon-96.png",
     "128": "icons/icon-128.png"
   }
 }

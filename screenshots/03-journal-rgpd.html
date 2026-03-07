@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>PseudoShield — Journal RGPD</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #1a1a2e;
+      color: #e0e0e0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 32px 40px;
+    }
+    .container { max-width: 1200px; width: 100%; }
+
+    .header {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 8px; padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .header h1 { font-size: 22px; font-weight: 700; }
+    .header h1 .g { color: #00b894; }
+    .header .badge { background: rgba(0,184,148,0.15); color: #00b894; padding: 2px 10px; border-radius: 10px; font-size: 11px; font-weight: 600; margin-left: 8px; }
+
+    .tabs {
+      display: flex; gap: 0; margin-bottom: 20px; margin-top: 16px;
+      border-bottom: 2px solid rgba(255,255,255,0.08);
+    }
+    .tab {
+      padding: 10px 20px; font-size: 13px; font-weight: 600;
+      color: rgba(255,255,255,0.4); cursor: pointer; border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+    }
+    .tab.active { color: #00b894; border-bottom-color: #00b894; }
+
+    .panel-header { margin-bottom: 6px; }
+    .panel-title { font-size: 18px; font-weight: 700; }
+    .panel-desc { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 4px; margin-bottom: 16px; }
+
+    .filters {
+      display: flex; gap: 12px; align-items: flex-end; margin-bottom: 18px;
+      padding: 14px 18px; background: rgba(255,255,255,0.02); border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .filter-group { display: flex; flex-direction: column; gap: 4px; }
+    .filter-group.grow { flex: 1; }
+    .filter-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; color: rgba(255,255,255,0.4); letter-spacing: 0.5px; }
+    .filter-input {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 5px; padding: 7px 12px; color: #e0e0e0; font-size: 12px;
+    }
+    .filter-input::placeholder { color: rgba(255,255,255,0.3); }
+    .btn {
+      padding: 7px 14px; border-radius: 6px; font-size: 12px; font-weight: 600;
+      border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.06);
+      color: #e0e0e0; cursor: pointer; white-space: nowrap;
+    }
+    .btn-danger { border-color: rgba(231,76,60,0.3); color: #e74c3c; }
+
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      background: rgba(255,255,255,0.04); padding: 10px 14px;
+      text-align: left; font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.6px;
+      color: rgba(255,255,255,0.5); border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    tbody td {
+      padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.04);
+      font-size: 13px; color: rgba(255,255,255,0.8);
+    }
+    tbody tr:hover { background: rgba(255,255,255,0.02); }
+
+    .site-tag {
+      background: rgba(116,185,255,0.12); color: #74b9ff;
+      padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;
+    }
+    .count-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 24px; padding: 2px 6px; border-radius: 4px;
+      font-size: 12px; font-weight: 700; text-align: center;
+    }
+    .count-green { background: rgba(0,184,148,0.15); color: #00b894; }
+    .count-purple { background: rgba(108,92,231,0.15); color: #a29bfe; }
+    .count-red { background: rgba(231,76,60,0.15); color: #e74c3c; }
+
+    .pattern-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+    .pattern-tag {
+      background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.6);
+      padding: 1px 6px; border-radius: 3px; font-size: 10px; font-family: monospace;
+    }
+
+    .actions { display: flex; gap: 10px; margin-top: 18px; }
+
+    .summary-row {
+      display: flex; gap: 16px; margin-bottom: 18px;
+    }
+    .summary-card {
+      flex: 1; padding: 12px 16px; border-radius: 8px;
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+      text-align: center;
+    }
+    .summary-val { font-size: 24px; font-weight: 800; }
+    .summary-val.green { color: #00b894; }
+    .summary-val.purple { color: #a29bfe; }
+    .summary-val.orange { color: #fdcb6e; }
+    .summary-val.blue { color: #74b9ff; }
+    .summary-lbl { font-size: 10px; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .footer { text-align: center; margin-top: 18px; font-size: 11px; color: rgba(255,255,255,0.2); }
+    .footer a { color: #00b894; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1><span class="g">Pseudo</span>Shield</h1>
+      <span class="badge">v2.0.0</span>
+    </div>
+
+    <div class="tabs">
+      <div class="tab">&#128203; Correspondance</div>
+      <div class="tab">&#128269; Patterns</div>
+      <div class="tab">&#127760; Sites</div>
+      <div class="tab active">&#128202; Journal RGPD</div>
+    </div>
+
+    <div class="panel-header">
+      <div class="panel-title">Journal RGPD</div>
+      <div class="panel-desc">Registre des traitements de pseudonymisation conforme a l'article 30 du RGPD</div>
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-card"><div class="summary-val green">47</div><div class="summary-lbl">Operations</div></div>
+      <div class="summary-card"><div class="summary-val purple">156</div><div class="summary-lbl">Remplacements</div></div>
+      <div class="summary-card"><div class="summary-val orange">8</div><div class="summary-lbl">Sites couverts</div></div>
+      <div class="summary-card"><div class="summary-val blue">14ms</div><div class="summary-lbl">Temps moyen</div></div>
+    </div>
+
+    <div class="filters">
+      <div class="filter-group">
+        <div class="filter-lbl">Du</div>
+        <input type="text" class="filter-input" value="01/02/2026" style="width:110px">
+      </div>
+      <div class="filter-group">
+        <div class="filter-lbl">Au</div>
+        <input type="text" class="filter-input" value="15/02/2026" style="width:110px">
+      </div>
+      <div class="filter-group grow">
+        <div class="filter-lbl">Site</div>
+        <input type="text" class="filter-input" placeholder="Filtrer par URL..." style="width:100%">
+      </div>
+      <button class="btn">Filtrer</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>URL</th>
+          <th>Remplacements</th>
+          <th>Art. 4</th>
+          <th>Art. 9</th>
+          <th>Patterns declenches</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>15/02 14:36</td>
+          <td><span class="site-tag">claude.ai</span></td>
+          <td><span class="count-badge count-green">7</span></td>
+          <td><span class="count-badge count-purple">5</span></td>
+          <td><span class="count-badge count-red">2</span></td>
+          <td><div class="pattern-tags"><span class="pattern-tag">NOM_CIVILITE</span><span class="pattern-tag">DATE_NAISSANCE</span><span class="pattern-tag">ADRESSE_EU</span><span class="pattern-tag">NISS_BE</span><span class="pattern-tag">IBAN_BE</span><span class="pattern-tag">BCE_BE</span><span class="pattern-tag">EMAIL</span></div></td>
+        </tr>
+        <tr>
+          <td>15/02 14:22</td>
+          <td><span class="site-tag">chatgpt.com</span></td>
+          <td><span class="count-badge count-green">5</span></td>
+          <td><span class="count-badge count-purple">4</span></td>
+          <td><span class="count-badge count-red">1</span></td>
+          <td><div class="pattern-tags"><span class="pattern-tag">NOM_CONTEXTE</span><span class="pattern-tag">TEL_BE</span><span class="pattern-tag">EMAIL</span><span class="pattern-tag">IBAN_FR</span><span class="pattern-tag">SECU_FR</span></div></td>
+        </tr>
+        <tr>
+          <td>15/02 11:45</td>
+          <td><span class="site-tag">chat.deepseek.com</span></td>
+          <td><span class="count-badge count-green">3</span></td>
+          <td><span class="count-badge count-purple">3</span></td>
+          <td><span class="count-badge count-red">0</span></td>
+          <td><div class="pattern-tags"><span class="pattern-tag">NOM_CIVILITE</span><span class="pattern-tag">TVA_BE</span><span class="pattern-tag">ADRESSE_EU</span></div></td>
+        </tr>
+        <tr>
+          <td>14/02 16:30</td>
+          <td><span class="site-tag">claude.ai</span></td>
+          <td><span class="count-badge count-green">9</span></td>
+          <td><span class="count-badge count-purple">6</span></td>
+          <td><span class="count-badge count-red">3</span></td>
+          <td><div class="pattern-tags"><span class="pattern-tag">NOM_CIVILITE</span><span class="pattern-tag">NOM_CONSECUTIF</span><span class="pattern-tag">DATE_NAISSANCE</span><span class="pattern-tag">NISS_BE</span><span class="pattern-tag">IBAN_BE</span><span class="pattern-tag">CB</span><span class="pattern-tag">EMAIL</span><span class="pattern-tag">TEL_BE</span><span class="pattern-tag">INAMI_BE</span></div></td>
+        </tr>
+        <tr>
+          <td>14/02 09:15</td>
+          <td><span class="site-tag">gemini.google.com</span></td>
+          <td><span class="count-badge count-green">4</span></td>
+          <td><span class="count-badge count-purple">3</span></td>
+          <td><span class="count-badge count-red">1</span></td>
+          <td><div class="pattern-tags"><span class="pattern-tag">NOM_MULTICONTEXTE</span><span class="pattern-tag">ADRESSE_EU</span><span class="pattern-tag">IPV4</span><span class="pattern-tag">DATE_NAISSANCE</span></div></td>
+        </tr>
+        <tr>
+          <td>13/02 17:52</td>
+          <td><span class="site-tag">copilot.microsoft.com</span></td>
+          <td><span class="count-badge count-green">6</span></td>
+          <td><span class="count-badge count-purple">5</span></td>
+          <td><span class="count-badge count-red">1</span></td>
+          <td><div class="pattern-tags"><span class="pattern-tag">NOM_CIVILITE</span><span class="pattern-tag">EMAIL</span><span class="pattern-tag">TEL_INT</span><span class="pattern-tag">IBAN_LU</span><span class="pattern-tag">TVA_LU</span><span class="pattern-tag">PASSPORT_BE</span></div></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="actions">
+      <button class="btn">&#128229; Exporter CSV</button>
+      <button class="btn">&#128229; Exporter JSON</button>
+      <button class="btn btn-danger">&#128465; Purger le journal</button>
+    </div>
+
+    <div class="footer">PseudoShield v2.0.0 &middot; <a href="https://lawgitech.eu">Lawgitech (Digilaw SRL)</a> &middot; Journal RGPD Art. 30 — export audit-ready</div>
+  </div>
+</body>
+</html>

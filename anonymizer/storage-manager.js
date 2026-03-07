@@ -31,6 +31,11 @@
    */
   async function getBytesInUse() {
     try {
+      // getBytesInUse est supporte dans Chrome et Firefox 144+
+      // Degradation gracieuse pour anciennes versions Firefox
+      if (typeof chrome.storage.local.getBytesInUse !== 'function') {
+        return 0;
+      }
       const bytesUsed = await chrome.storage.local.getBytesInUse(null);
       return bytesUsed;
     } catch (e) {
@@ -235,7 +240,10 @@
     let newestEntry = null;
 
     try {
-      journalBytesUsed = await chrome.storage.local.getBytesInUse(JOURNAL_KEY);
+      // getBytesInUse supporte Chrome + Firefox 144+, sinon 0
+      if (typeof chrome.storage.local.getBytesInUse === 'function') {
+        journalBytesUsed = await chrome.storage.local.getBytesInUse(JOURNAL_KEY);
+      }
 
       const result = await chrome.storage.local.get(JOURNAL_KEY);
       const journal = result[JOURNAL_KEY] || [];

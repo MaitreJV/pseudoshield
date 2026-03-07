@@ -1,6 +1,6 @@
 # PseudoShield
 
-> Pseudonymize personal data before pasting into AI — 100% local Chrome extension.
+> Pseudonymize personal data before pasting into AI — 100% local browser extension (Chrome & Firefox).
 
 PseudoShield intercepts paste events (Ctrl+V) on major AI platforms and automatically replaces personal data with deterministic pseudonyms (SHA-256) before the text reaches the chat interface. The AI never sees the real data.
 
@@ -41,14 +41,26 @@ The extension intercepts the paste, detects PII using regex + validation, replac
 
 ### Chrome Web Store
 
-Coming soon — under review.
+[Install PseudoShield](https://chromewebstore.google.com/detail/pseudoshield/emjdkidcnkbjkpmlffjcjhpofckomfel) — free, open source.
 
-### Manual (developer mode)
+### Firefox Add-ons (AMO)
+
+Coming soon — pending AMO review.
+
+### Manual — Chrome (developer mode)
 
 1. Clone this repo: `git clone https://github.com/MaitreJV/pseudoshield.git`
 2. Open `chrome://extensions/`
 3. Enable "Developer mode" (top right)
 4. Click "Load unpacked" and select the cloned folder
+5. Navigate to any supported AI platform and paste text with personal data
+
+### Manual — Firefox (developer mode)
+
+1. Clone this repo: `git clone https://github.com/MaitreJV/pseudoshield.git`
+2. Open `about:debugging#/runtime/this-firefox`
+3. Click "Load Temporary Add-on..."
+4. Select `manifest.json` in the cloned folder
 5. Navigate to any supported AI platform and paste text with personal data
 
 ## Project structure
@@ -89,7 +101,7 @@ pseudoshield/
 │   ├── toast.js               # Notification toasts
 │   ├── toast.css              # Toast styles
 │   └── popup.css              # Popup styles
-├── icons/                     # Extension icons (16/32/48/128)
+├── icons/                     # Extension icons (16/32/48/96/128)
 ├── _locales/                  # i18n (fr)
 └── test/                      # Test suite
     ├── test-patterns.js       # Pattern detection tests

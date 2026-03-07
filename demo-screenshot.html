@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PseudoShield Demo</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #1a1a2e;
+      color: #e0e0e0;
+      font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 40px;
+    }
+
+    .demo-container {
+      max-width: 1200px;
+      width: 100%;
+    }
+
+    /* Header */
+    .demo-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .demo-header h1 {
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+
+    .demo-header h1 .shield {
+      color: #00b894;
+    }
+
+    .demo-header p {
+      font-size: 16px;
+      color: rgba(255,255,255,0.5);
+    }
+
+    /* Cards container */
+    .cards {
+      display: grid;
+      grid-template-columns: 1fr 80px 1fr;
+      gap: 0;
+      align-items: center;
+    }
+
+    /* Arrow */
+    .arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .arrow-icon {
+      font-size: 40px;
+      color: #00b894;
+      animation: pulse 2s infinite;
+    }
+
+    .arrow-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #00b894;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Card */
+    .card {
+      border-radius: 16px;
+      padding: 28px;
+      position: relative;
+    }
+
+    .card-before {
+      background: rgba(231, 76, 60, 0.08);
+      border: 1.5px solid rgba(231, 76, 60, 0.25);
+    }
+
+    .card-after {
+      background: rgba(0, 184, 148, 0.08);
+      border: 1.5px solid rgba(0, 184, 148, 0.25);
+    }
+
+    .card-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 16px;
+    }
+
+    .card-before .card-label {
+      background: rgba(231, 76, 60, 0.15);
+      color: #e74c3c;
+      border: 1px solid rgba(231, 76, 60, 0.3);
+    }
+
+    .card-after .card-label {
+      background: rgba(0, 184, 148, 0.15);
+      color: #00b894;
+      border: 1px solid rgba(0, 184, 148, 0.3);
+    }
+
+    .card-text {
+      font-size: 14px;
+      line-height: 1.8;
+      color: rgba(255,255,255,0.85);
+    }
+
+    /* Highlights */
+    .pii {
+      background: rgba(231, 76, 60, 0.2);
+      color: #ff6b6b;
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-weight: 600;
+      border: 1px solid rgba(231, 76, 60, 0.3);
+    }
+
+    .pseudo {
+      background: rgba(0, 184, 148, 0.2);
+      color: #00b894;
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-weight: 600;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 13px;
+      border: 1px solid rgba(0, 184, 148, 0.3);
+    }
+
+    /* Stats bar */
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-top: 36px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 800;
+      color: #00b894;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    /* Footer */
+    .demo-footer {
+      text-align: center;
+      margin-top: 28px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.3);
+    }
+
+    .demo-footer a {
+      color: #00b894;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="demo-container">
+
+    <!-- Header -->
+    <div class="demo-header">
+      <h1><span class="shield">Pseudo</span>Shield</h1>
+      <p>Pseudonymisez vos donnees avant de les coller dans une IA</p>
+    </div>
+
+    <!-- Before / After cards -->
+    <div class="cards">
+
+      <!-- AVANT -->
+      <div class="card card-before">
+        <div class="card-label">&#9888; Texte original (Ctrl+V)</div>
+        <div class="card-text">
+          Concerne : <span class="pii">Monsieur Jean-Pierre Dupont</span>, ne le <span class="pii">15/03/1985</span>, domicilie <span class="pii">rue de la Loi 42, 1000 Bruxelles</span>. Son numero de registre national est <span class="pii">85.03.15-123.45</span> et son IBAN est <span class="pii">BE68 5390 0754 7034</span>. Il est avocat au Barreau de Liege. Le numero BCE de sa societe est <span class="pii">0123.456.789</span>. Contact : <span class="pii">jp.dupont@lawfirm.be</span>.
+        </div>
+      </div>
+
+      <!-- Arrow -->
+      <div class="arrow">
+        <div class="arrow-icon">&#10132;</div>
+        <div class="arrow-label">SHA-256</div>
+      </div>
+
+      <!-- APRES -->
+      <div class="card card-after">
+        <div class="card-label">&#10003; Texte pseudonymise</div>
+        <div class="card-text">
+          Concerne : <span class="pseudo">[Personne_13]</span>, ne le <span class="pseudo">[Date_1]</span>, domicilie <span class="pseudo">[Adresse_7]</span>. Son numero de registre national est <span class="pseudo">[NISS_1]</span> et son IBAN est <span class="pseudo">[IBAN_1]</span>. Il est avocat au Barreau de Liege. Le numero BCE de sa societe est <span class="pseudo">[BCE_2]</span>. Contact : <span class="pseudo">[Email_3]</span>.
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-bar">
+      <div class="stat">
+        <div class="stat-value">29+</div>
+        <div class="stat-label">Types de donnees detectes</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">7</div>
+        <div class="stat-label">Donnees pseudonymisees</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">12ms</div>
+        <div class="stat-label">Temps de traitement</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">0</div>
+        <div class="stat-label">Donnees transmises</div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="demo-footer">
+      PseudoShield v2.0.0 &middot; <a href="https://lawgitech.eu">Lawgitech (Digilaw SRL)</a> &middot; 100% local, zero telemetrie
+    </div>
+
+  </div>
+</body>
+</html>

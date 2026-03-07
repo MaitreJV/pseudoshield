@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>PseudoShield — Capture Screenshots</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #111; color: #fff; font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px; }
+    h1 { margin-bottom: 10px; font-size: 24px; }
+    p { color: #888; margin-bottom: 20px; font-size: 14px; }
+    .btn-row { display: flex; gap: 12px; margin-bottom: 30px; flex-wrap: wrap; }
+    .btn {
+      padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 700;
+      border: none; cursor: pointer; color: #fff; transition: 0.2s;
+    }
+    .btn:hover { opacity: 0.85; transform: scale(1.02); }
+    .btn-1 { background: #e74c3c; }
+    .btn-2 { background: #6c5ce7; }
+    .btn-3 { background: #fdcb6e; color: #333; }
+    .btn-4 { background: #00b894; }
+    .btn-all { background: #74b9ff; }
+    .status { margin-top: 10px; font-size: 13px; color: #00b894; min-height: 20px; }
+
+    /* Container invisible pour le rendu a 1280x800 */
+    .render-frame {
+      position: absolute;
+      left: -9999px;
+      top: 0;
+      width: 1280px;
+      height: 800px;
+      overflow: hidden;
+    }
+    .render-frame iframe {
+      width: 1280px;
+      height: 800px;
+      border: none;
+      transform-origin: top left;
+    }
+  </style>
+</head>
+<body>
+  <h1>&#128248; PseudoShield — Generateur de screenshots</h1>
+  <p>Chaque bouton genere un JPEG de 1280x800 pixels et le telecharge automatiquement.</p>
+
+  <div class="btn-row">
+    <button class="btn btn-1" onclick="capture('01-avant-apres.html', 'pseudoshield-avant-apres.jpg')">1. Avant/Apres</button>
+    <button class="btn btn-2" onclick="capture('02-table-rgpd.html', 'pseudoshield-table-rgpd.jpg')">2. Table RGPD</button>
+    <button class="btn btn-3" onclick="capture('03-journal-rgpd.html', 'pseudoshield-journal-rgpd.jpg')">3. Journal RGPD</button>
+    <button class="btn btn-4" onclick="capture('04-plateformes.html', 'pseudoshield-plateformes.jpg')">4. Plateformes</button>
+    <button class="btn btn-all" onclick="captureAll()">&#128229; Tout telecharger</button>
+  </div>
+
+  <div class="status" id="status"></div>
+
+  <div class="render-frame" id="render-frame">
+    <iframe id="render-iframe"></iframe>
+  </div>
+
+  <script>
+    const WIDTH = 1280;
+    const HEIGHT = 800;
+
+    function setStatus(msg) {
+      document.getElementById('status').textContent = msg;
+    }
+
+    function capture(htmlFile, filename) {
+      return new Promise((resolve) => {
+        setStatus('Chargement de ' + htmlFile + '...');
+        const iframe = document.getElementById('render-iframe');
+
+        iframe.onload = function() {
+          setStatus('Rendu de ' + htmlFile + '...');
+
+          setTimeout(() => {
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+            html2canvas(iframeDoc.body, {
+              width: WIDTH,
+              height: HEIGHT,
+              windowWidth: WIDTH,
+              windowHeight: HEIGHT,
+              backgroundColor: '#1a1a2e',
+              scale: 1,
+              useCORS: true,
+              logging: false
+            }).then(canvas => {
+              // Convertir en JPEG
+              const jpegUrl = canvas.toDataURL('image/jpeg', 0.95);
+
+              // Telecharger
+              const link = document.createElement('a');
+              link.download = filename;
+              link.href = jpegUrl;
+              link.click();
+
+              setStatus('✅ ' + filename + ' telecharge ! (' + WIDTH + 'x' + HEIGHT + ')');
+              resolve();
+            }).catch(err => {
+              setStatus('❌ Erreur : ' + err.message);
+              resolve();
+            });
+          }, 500);
+        };
+
+        iframe.src = htmlFile;
+      });
+    }
+
+    async function captureAll() {
+      const files = [
+        ['01-avant-apres.html', 'pseudoshield-avant-apres.jpg'],
+        ['02-table-rgpd.html', 'pseudoshield-table-rgpd.jpg'],
+        ['03-journal-rgpd.html', 'pseudoshield-journal-rgpd.jpg'],
+        ['04-plateformes.html', 'pseudoshield-plateformes.jpg']
+      ];
+
+      for (let i = 0; i < files.length; i++) {
+        setStatus('Capture ' + (i+1) + '/4 : ' + files[i][1] + '...');
+        await capture(files[i][0], files[i][1]);
+        await new Promise(r => setTimeout(r, 1000));
+      }
+      setStatus('✅ 4/4 screenshots telecharges !');
+    }
+  </script>
+</body>
+</html>

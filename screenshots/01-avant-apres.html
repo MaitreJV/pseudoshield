@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>PseudoShield — Avant/Apres</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #1a1a2e;
+      color: #e0e0e0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 32px 40px;
+    }
+    .container { max-width: 1200px; width: 100%; }
+
+    .header { text-align: center; margin-bottom: 32px; }
+    .header h1 { font-size: 38px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 6px; }
+    .header h1 .g { color: #00b894; }
+    .header p { font-size: 15px; color: rgba(255,255,255,0.45); }
+
+    .cards { display: grid; grid-template-columns: 1fr 70px 1fr; align-items: center; }
+
+    .arrow { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .arrow-icon { font-size: 36px; color: #00b894; }
+    .arrow-label { font-size: 10px; font-weight: 700; color: #00b894; text-transform: uppercase; letter-spacing: 1px; }
+
+    .card { border-radius: 14px; padding: 24px; }
+    .card-before { background: rgba(231,76,60,0.07); border: 1.5px solid rgba(231,76,60,0.22); }
+    .card-after { background: rgba(0,184,148,0.07); border: 1.5px solid rgba(0,184,148,0.22); }
+
+    .card-label {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 3px 10px; border-radius: 5px;
+      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;
+      margin-bottom: 14px;
+    }
+    .card-before .card-label { background: rgba(231,76,60,0.15); color: #e74c3c; border: 1px solid rgba(231,76,60,0.3); }
+    .card-after .card-label { background: rgba(0,184,148,0.15); color: #00b894; border: 1px solid rgba(0,184,148,0.3); }
+
+    .card-text { font-size: 13.5px; line-height: 1.85; color: rgba(255,255,255,0.85); }
+
+    .pii { background: rgba(231,76,60,0.2); color: #ff6b6b; padding: 1px 5px; border-radius: 3px; font-weight: 600; border: 1px solid rgba(231,76,60,0.3); }
+    .pseudo { background: rgba(0,184,148,0.2); color: #00b894; padding: 1px 5px; border-radius: 3px; font-weight: 600; font-family: 'Consolas','Monaco',monospace; font-size: 12.5px; border: 1px solid rgba(0,184,148,0.3); }
+
+    .stats { display: flex; justify-content: center; gap: 40px; margin-top: 28px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.06); }
+    .stat-val { font-size: 26px; font-weight: 800; color: #00b894; text-align: center; }
+    .stat-lbl { font-size: 10px; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.8px; text-align: center; }
+
+    .footer { text-align: center; margin-top: 20px; font-size: 12px; color: rgba(255,255,255,0.25); }
+    .footer a { color: #00b894; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1><span class="g">Pseudo</span>Shield</h1>
+      <p>Pseudonymisez vos donnees personnelles avant de les coller dans une IA</p>
+    </div>
+    <div class="cards">
+      <div class="card card-before">
+        <div class="card-label">&#9888; Texte original (Ctrl+V)</div>
+        <div class="card-text">
+          Concerne : <span class="pii">Monsieur Jean-Pierre Dupont</span>, ne le <span class="pii">15/03/1985</span>, domicilie <span class="pii">rue de la Loi 42, 1000 Bruxelles</span>. Son numero de registre national est <span class="pii">85.03.15-123.45</span> et son IBAN est <span class="pii">BE68 5390 0754 7034</span>. Il est avocat au Barreau de Liege. Le numero BCE de sa societe est <span class="pii">0123.456.789</span>. Contact : <span class="pii">jp.dupont@lawfirm.be</span>.
+        </div>
+      </div>
+      <div class="arrow">
+        <div class="arrow-icon">&#10132;</div>
+        <div class="arrow-label">SHA-256</div>
+      </div>
+      <div class="card card-after">
+        <div class="card-label">&#10003; Texte pseudonymise</div>
+        <div class="card-text">
+          Concerne : <span class="pseudo">[Personne_13]</span>, ne le <span class="pseudo">[Date_1]</span>, domicilie <span class="pseudo">[Adresse_7]</span>. Son numero de registre national est <span class="pseudo">[NISS_1]</span> et son IBAN est <span class="pseudo">[IBAN_1]</span>. Il est avocat au Barreau de Liege. Le numero BCE de sa societe est <span class="pseudo">[BCE_2]</span>. Contact : <span class="pseudo">[Email_3]</span>.
+        </div>
+      </div>
+    </div>
+    <div class="stats">
+      <div><div class="stat-val">35</div><div class="stat-lbl">Types de donnees</div></div>
+      <div><div class="stat-val">7</div><div class="stat-lbl">Donnees detectees</div></div>
+      <div><div class="stat-val">12ms</div><div class="stat-lbl">Temps de traitement</div></div>
+      <div><div class="stat-val">0</div><div class="stat-lbl">Donnees transmises</div></div>
+    </div>
+    <div class="footer">PseudoShield v2.0.0 &middot; <a href="https://lawgitech.eu">Lawgitech (Digilaw SRL)</a> &middot; 100% local, zero telemetrie</div>
+  </div>
+</body>
+</html>

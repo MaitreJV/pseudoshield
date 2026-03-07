@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>PseudoShield — Plateformes</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #1a1a2e;
+      color: #e0e0e0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 32px 40px;
+    }
+    .container { max-width: 1100px; width: 100%; }
+
+    .header { text-align: center; margin-bottom: 36px; }
+    .header h1 { font-size: 36px; font-weight: 800; margin-bottom: 6px; }
+    .header h1 .g { color: #00b894; }
+    .header p { font-size: 15px; color: rgba(255,255,255,0.45); }
+
+    .platforms { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+
+    .platform-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 22px;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .platform-card:hover { border-color: rgba(0,184,148,0.3); background: rgba(0,184,148,0.03); }
+
+    .platform-icon { font-size: 40px; margin-bottom: 10px; }
+    .platform-name { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .platform-domain { font-size: 11px; color: rgba(255,255,255,0.35); margin-bottom: 10px; font-family: monospace; }
+
+    .adapter-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 5px;
+      font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .adapter-prosemirror { background: rgba(108,92,231,0.15); color: #a29bfe; }
+    .adapter-textarea { background: rgba(0,206,209,0.15); color: #00cec9; }
+    .adapter-quill { background: rgba(253,203,110,0.15); color: #fdcb6e; }
+
+    .status { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 10px; font-size: 12px; font-weight: 600; color: #00b894; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #00b894; }
+
+    .features-section { margin-top: 10px; }
+    .features-title { text-align: center; font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 18px; }
+
+    .features { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .feature {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+    .feature-icon { font-size: 28px; margin-bottom: 8px; }
+    .feature-name { font-size: 12px; font-weight: 700; margin-bottom: 3px; }
+    .feature-desc { font-size: 10px; color: rgba(255,255,255,0.35); line-height: 1.4; }
+
+    .fallback-note {
+      text-align: center; margin-top: 20px;
+      padding: 12px 20px; border-radius: 8px;
+      background: rgba(0,184,148,0.06); border: 1px solid rgba(0,184,148,0.12);
+      font-size: 12px; color: rgba(255,255,255,0.5);
+    }
+    .fallback-note strong { color: #00b894; }
+
+    .footer { text-align: center; margin-top: 20px; font-size: 11px; color: rgba(255,255,255,0.2); }
+    .footer a { color: #00b894; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1><span class="g">Pseudo</span>Shield</h1>
+      <p>Compatible avec toutes les plateformes IA majeures</p>
+    </div>
+
+    <div class="platforms">
+      <div class="platform-card">
+        <div class="platform-icon">&#129302;</div>
+        <div class="platform-name">Claude</div>
+        <div class="platform-domain">claude.ai</div>
+        <div><span class="adapter-badge adapter-prosemirror">ProseMirror</span></div>
+        <div class="status"><span class="status-dot"></span> Teste &amp; valide</div>
+      </div>
+      <div class="platform-card">
+        <div class="platform-icon">&#128172;</div>
+        <div class="platform-name">ChatGPT</div>
+        <div class="platform-domain">chatgpt.com</div>
+        <div><span class="adapter-badge adapter-prosemirror">ProseMirror</span></div>
+        <div class="status"><span class="status-dot"></span> Teste &amp; valide</div>
+      </div>
+      <div class="platform-card">
+        <div class="platform-icon">&#127758;</div>
+        <div class="platform-name">DeepSeek</div>
+        <div class="platform-domain">chat.deepseek.com</div>
+        <div><span class="adapter-badge adapter-textarea">Textarea</span></div>
+        <div class="status"><span class="status-dot"></span> Teste &amp; valide</div>
+      </div>
+      <div class="platform-card">
+        <div class="platform-icon">&#9982;</div>
+        <div class="platform-name">Gemini</div>
+        <div class="platform-domain">gemini.google.com</div>
+        <div><span class="adapter-badge adapter-quill">Quill Editor</span></div>
+        <div class="status"><span class="status-dot"></span> Teste &amp; valide</div>
+      </div>
+      <div class="platform-card">
+        <div class="platform-icon">&#128187;</div>
+        <div class="platform-name">Copilot</div>
+        <div class="platform-domain">copilot.microsoft.com</div>
+        <div><span class="adapter-badge adapter-textarea">Textarea</span></div>
+        <div class="status"><span class="status-dot"></span> Teste &amp; valide</div>
+      </div>
+      <div class="platform-card">
+        <div class="platform-icon">&#128270;</div>
+        <div class="platform-name">Perplexity</div>
+        <div class="platform-domain">perplexity.ai</div>
+        <div><span class="adapter-badge adapter-quill">Quill Editor</span></div>
+        <div class="status"><span class="status-dot"></span> Teste &amp; valide</div>
+      </div>
+    </div>
+
+    <div class="features-section">
+      <div class="features-title">Architecture technique</div>
+      <div class="features">
+        <div class="feature">
+          <div class="feature-icon">&#128274;</div>
+          <div class="feature-name">SHA-256 local</div>
+          <div class="feature-desc">Web Crypto API native. Aucune librairie externe.</div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">&#128203;</div>
+          <div class="feature-name">Journal Art. 30</div>
+          <div class="feature-desc">Audit trail complet. Export CSV/JSON.</div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">&#128295;</div>
+          <div class="feature-name">35 patterns</div>
+          <div class="feature-desc">Validation Luhn, mod 97, ISO 13616.</div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">&#127760;</div>
+          <div class="feature-name">Open Source</div>
+          <div class="feature-desc">Code auditable sur GitHub. MIT License.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fallback-note">
+      <strong>+ Fallback generique</strong> — Fonctionne sur tout site avec un champ texte (textarea ou contentEditable)
+    </div>
+
+    <div class="footer">PseudoShield v2.0.0 &middot; <a href="https://lawgitech.eu">Lawgitech (Digilaw SRL)</a> &middot; 100% local, zero telemetrie</div>
+  </div>
+</body>
+</html>
