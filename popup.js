@@ -10,6 +10,13 @@
     identite: 'Identité', contact: 'Contact', financier: 'Financier', adresse: 'Adresses', technique: 'Technique'
   };
 
+  // Echappement HTML pour prevenir XSS dans innerHTML
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = String(str);
+    return div.innerHTML;
+  }
+
   async function loadStats() {
     try {
       const response = await chrome.runtime.sendMessage({ type: 'getSessionStats' });
@@ -29,8 +36,8 @@
         listEl.innerHTML = entries.map(([cat, count]) =>
           '<div class="category-item">' +
             '<span class="category-icon">' + (CATEGORY_ICONS[cat] || '📌') + '</span>' +
-            '<span class="category-label">' + (CATEGORY_LABELS[cat] || cat) + '</span>' +
-            '<span class="category-count">' + count + '</span>' +
+            '<span class="category-label">' + escapeHtml(CATEGORY_LABELS[cat] || cat) + '</span>' +
+            '<span class="category-count">' + escapeHtml(String(count)) + '</span>' +
           '</div>'
         ).join('');
       }

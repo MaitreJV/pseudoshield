@@ -4,6 +4,9 @@
 (function() {
   'use strict';
 
+  // Categories valides pour filtrer les messages entrants
+  const VALID_CATEGORIES = new Set(['identite', 'contact', 'financier', 'adresse', 'technique']);
+
   let sessionCount = 0;
   let sessionStats = {
     total: 0,
@@ -18,46 +21,46 @@
     chrome.action.setBadgeBackgroundColor({ color: count > 0 ? '#00b894' : '#666666' });
   }
 
+  // Helper : fusionner les categoryCounts avec validation
+  function mergeCategoryCounts(categoryCounts) {
+    if (!categoryCounts || typeof categoryCounts !== 'object') return;
+    for (const [cat, count] of Object.entries(categoryCounts)) {
+      // Accepter uniquement les categories connues pour prevenir l'injection
+      if (!VALID_CATEGORIES.has(cat)) continue;
+      const safeCount = parseInt(count, 10);
+      if (isNaN(safeCount) || safeCount < 0) continue;
+      sessionStats.categoryCounts[cat] = (sessionStats.categoryCounts[cat] || 0) + safeCount;
+    }
+  }
+
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    // Validation sender : toggle et resetSession ne doivent venir que des pages extension
+    const isExtensionPage = !sender.tab;
+
     switch (message.type) {
       case 'pseudonymization_done':
-        sessionCount += message.count || 0;
-        sessionStats.total += message.count || 0;
-        sessionStats.art4 += message.rgpdCategories?.art4 || 0;
-        sessionStats.art9 += message.rgpdCategories?.art9 || 0;
-
-        if (message.categoryCounts) {
-          for (const [cat, count] of Object.entries(message.categoryCounts)) {
-            sessionStats.categoryCounts[cat] = (sessionStats.categoryCounts[cat] || 0) + count;
-          }
-        }
-
+      case 'anonymization_done': {
+        const count = parseInt(message.count || 0, 10);
+        sessionCount += count;
+        sessionStats.total += count;
+        sessionStats.art4 += parseInt(message.rgpdCategories?.art4 || 0, 10);
+        sessionStats.art9 += parseInt(message.rgpdCategories?.art9 || 0, 10);
+        mergeCategoryCounts(message.categoryCounts);
         updateBadge(sessionCount);
         sendResponse({ ok: true });
         break;
-
-      // Compatibilite v1 — accepter l'ancien message type pendant la transition
-      case 'anonymization_done':
-        sessionCount += message.count || 0;
-        sessionStats.total += message.count || 0;
-        sessionStats.art4 += message.rgpdCategories?.art4 || 0;
-        sessionStats.art9 += message.rgpdCategories?.art9 || 0;
-
-        if (message.categoryCounts) {
-          for (const [cat, count] of Object.entries(message.categoryCounts)) {
-            sessionStats.categoryCounts[cat] = (sessionStats.categoryCounts[cat] || 0) + count;
-          }
-        }
-
-        updateBadge(sessionCount);
-        sendResponse({ ok: true });
-        break;
+      }
 
       case 'getSessionStats':
         sendResponse({ stats: sessionStats, count: sessionCount });
         break;
 
       case 'resetSession':
+        // Seules les pages extension (popup, options) peuvent reset
+        if (!isExtensionPage) {
+          sendResponse({ error: 'Non autorise' });
+          break;
+        }
         sessionCount = 0;
         sessionStats = { total: 0, art4: 0, art9: 0, categoryCounts: {} };
         updateBadge(0);
@@ -65,17 +68,22 @@
         break;
 
       case 'toggle':
+        // Seules les pages extension (popup, options) peuvent toggle
+        if (!isExtensionPage) {
+          sendResponse({ error: 'Non autorise' });
+          break;
+        }
         chrome.tabs.query({}, (tabs) => {
           for (const tab of tabs) {
             try {
-              chrome.tabs.sendMessage(tab.id, { type: 'toggle', enabled: message.enabled });
+              chrome.tabs.sendMessage(tab.id, { type: 'toggle', enabled: !!message.enabled });
             } catch (e) {
               // Certains onglets peuvent ne pas avoir le content script
             }
           }
         });
 
-        chrome.storage.local.set({ pseudoshield_enabled: message.enabled });
+        chrome.storage.local.set({ pseudoshield_enabled: !!message.enabled });
 
         chrome.action.setBadgeBackgroundColor({
           color: message.enabled ? '#00b894' : '#666666'
@@ -85,7 +93,7 @@
         break;
 
       default:
-        sendResponse({ error: 'Type de message inconnu: ' + message.type });
+        sendResponse({ error: 'Type de message inconnu' });
     }
 
     return true; // Garder le canal ouvert pour sendResponse async

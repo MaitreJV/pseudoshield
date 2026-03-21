@@ -59,7 +59,7 @@
   window.PseudoShield.AdapterRegistry.register({
     name: 'DeepSeek',
     selector: 'textarea#chat-input, textarea',
-    detect: function() { return location.hostname.includes('deepseek.com'); },
+    detect: function() { return location.hostname === 'chat.deepseek.com'; },
     insert: insertViaNativeValue
   });
 })();
