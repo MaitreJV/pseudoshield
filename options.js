@@ -16,6 +16,19 @@
   // Regex de validation de domaine
   var DOMAIN_REGEX = /^(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}$/i;
 
+  // Domaines couverts statiquement par le manifest (aucune permission a demander).
+  var STATIC_DOMAINS = ['claude.ai', 'chatgpt.com', 'gemini.google.com', 'copilot.microsoft.com', 'chat.deepseek.com', 'perplexity.ai'];
+
+  // Patterns d'origine pour la demande de permission host d'un domaine custom.
+  function originPatternsForDomain(domain) {
+    return ['https://' + domain + '/*', 'https://*.' + domain + '/*'];
+  }
+
+  // Vrai si le domaine est deja couvert statiquement par le manifest (apex ou sous-domaine).
+  function isStaticDomain(domain) {
+    return STATIC_DOMAINS.some(s => domain === s || domain.endsWith('.' + s));
+  }
+
   // Navigation par onglets
   function initTabs() {
     const tabs = document.querySelectorAll('.tab-btn');
@@ -184,71 +197,149 @@
     });
   }
 
-  // Onglet 3 : Whitelist des sites
+  // Onglet 3 : Sites surveilles (plateformes statiques du manifest + domaines custom).
+  // Ajouter un domaine custom demande la permission host correspondante puis enregistre
+  // dynamiquement le content script via le service worker (messages registerSite/unregisterSite).
   async function loadSites() {
-    const result = await chrome.storage.local.get(['pseudoshield_whitelist', 'pseudoshield_allSites']);
-    const whitelist = result.pseudoshield_whitelist || ['claude.ai', 'chatgpt.com', 'gemini.google.com', 'copilot.microsoft.com', 'chat.deepseek.com', 'perplexity.ai'];
-    const allSites = result.pseudoshield_allSites || false;
+    const store = await chrome.storage.local.get(['pseudoshield_whitelist', 'pseudoshield_pending_permissions']);
+    const whitelist = store.pseudoshield_whitelist || STATIC_DOMAINS.slice();
+    let pending = store.pseudoshield_pending_permissions || [];
 
-    document.getElementById('all-sites-toggle').checked = allSites;
+    const listEl = document.getElementById('sites-list');
+    const pendingEl = document.getElementById('sites-pending');
+    const input = document.getElementById('add-site-input');
+
+    function persistWhitelist() {
+      return chrome.storage.local.set({ pseudoshield_whitelist: whitelist });
+    }
+    function persistPending() {
+      return chrome.storage.local.set({ pseudoshield_pending_permissions: pending });
+    }
 
     function renderSites() {
-      const listEl = document.getElementById('sites-list');
       if (whitelist.length === 0) {
         listEl.innerHTML = '<div class="sites-empty">Aucun site configuré</div>';
         return;
       }
-      listEl.innerHTML = whitelist.map((domain, i) =>
-        '<div class="site-item">' +
+      listEl.innerHTML = whitelist.map((domain, i) => {
+        const tag = isStaticDomain(domain)
+          ? '<span class="site-tag">par défaut</span>'
+          : '<span class="site-tag site-tag-custom">ajouté</span>';
+        return '<div class="site-item">' +
           '<span class="site-domain">' + escapeHtml(domain) + '</span>' +
-          '<button class="btn-remove" data-index="' + i + '" title="Supprimer ce domaine">&#10005;</button>' +
-        '</div>'
-      ).join('');
+          tag +
+          '<button class="btn-remove" data-index="' + i + '" title="Retirer ce domaine">&#10005;</button>' +
+        '</div>';
+      }).join('');
+    }
+
+    function renderPending() {
+      if (!pending || pending.length === 0) {
+        pendingEl.innerHTML = '';
+        return;
+      }
+      pendingEl.innerHTML =
+        '<div class="sites-pending-title">En attente d\'autorisation</div>' +
+        pending.map(domain =>
+          '<div class="site-item site-item-pending">' +
+            '<span class="site-domain">' + escapeHtml(domain) + '</span>' +
+            '<button class="btn btn-secondary btn-authorize" data-domain="' + escapeHtml(domain) + '">Autoriser</button>' +
+          '</div>'
+        ).join('');
     }
 
     renderSites();
+    renderPending();
 
-    document.getElementById('sites-list').addEventListener('click', async (e) => {
-      if (e.target.classList.contains('btn-remove')) {
-        const idx = parseInt(e.target.dataset.index);
-        whitelist.splice(idx, 1);
-        await chrome.storage.local.set({ pseudoshield_whitelist: whitelist });
-        renderSites();
+    // Retrait d'un domaine
+    listEl.addEventListener('click', async (e) => {
+      if (!e.target.classList.contains('btn-remove')) return;
+      const idx = parseInt(e.target.dataset.index, 10);
+      const domain = whitelist[idx];
+      if (domain === undefined) return;
+      whitelist.splice(idx, 1);
+      await persistWhitelist();
+      renderSites();
+      // Domaine custom : desenregistrer le content script + retirer la permission host.
+      if (!isStaticDomain(domain)) {
+        try { await chrome.runtime.sendMessage({ type: 'unregisterSite', domain }); } catch (err) { /* ignore */ }
       }
     });
 
+    // Ajout d'un domaine
     document.getElementById('add-site-btn').addEventListener('click', async () => {
-      const input = document.getElementById('add-site-input');
       const domain = input.value.trim().toLowerCase();
-
       if (!domain) return;
 
-      // Validation du format de domaine
       if (!DOMAIN_REGEX.test(domain)) {
-        alert('Format de domaine invalide. Exemples valides : example.com, chat.example.com');
+        alert('Format de domaine invalide. Exemples valides : exemple.com, ia.mon-organisation.be');
         return;
       }
-
       if (whitelist.includes(domain)) {
         alert('Ce domaine est deja dans la liste.');
         return;
       }
 
-      whitelist.push(domain);
-      await chrome.storage.local.set({ pseudoshield_whitelist: whitelist });
-      input.value = '';
-      renderSites();
-    });
+      // Domaine statique : simple (re)activation, aucune permission requise.
+      if (isStaticDomain(domain)) {
+        whitelist.push(domain);
+        await persistWhitelist();
+        input.value = '';
+        renderSites();
+        return;
+      }
 
-    // Permettre l'ajout avec la touche Entrée
-    document.getElementById('add-site-input').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        document.getElementById('add-site-btn').click();
+      // Domaine custom : demander la permission host DANS le geste utilisateur.
+      // chrome.permissions.request doit etre le premier appel async (sinon Chrome
+      // considere qu'il n'y a pas de geste utilisateur et rejette la demande).
+      let granted = false;
+      try {
+        granted = await chrome.permissions.request({ origins: originPatternsForDomain(domain) });
+      } catch (err) {
+        alert('La demande d\'autorisation a echoue.');
+        return;
+      }
+      if (!granted) return; // Refus : on n'ecrit RIEN (pas de faux positif comme avant).
+
+      const resp = await chrome.runtime.sendMessage({ type: 'registerSite', domain });
+      if (resp && resp.ok) {
+        whitelist.push(domain);
+        await persistWhitelist();
+        input.value = '';
+        renderSites();
+      } else {
+        // Echec d'enregistrement : retirer la permission obtenue pour ne pas la laisser orpheline.
+        try { await chrome.permissions.remove({ origins: originPatternsForDomain(domain) }); } catch (err) { /* ignore */ }
+        alert('Impossible d\'activer la protection sur ce domaine.');
       }
     });
 
-    document.getElementById('all-sites-toggle').addEventListener('change', async (e) => {
-      await chrome.storage.local.set({ pseudoshield_allSites: e.target.checked });
+    // Ajout avec la touche Entree
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') document.getElementById('add-site-btn').click();
+    });
+
+    // Autoriser un domaine "en attente" (migration : present dans la whitelist sans permission)
+    pendingEl.addEventListener('click', async (e) => {
+      if (!e.target.classList.contains('btn-authorize')) return;
+      const domain = e.target.dataset.domain;
+      if (!domain) return;
+      let granted = false;
+      try {
+        granted = await chrome.permissions.request({ origins: originPatternsForDomain(domain) });
+      } catch (err) { return; }
+      if (!granted) return;
+      const resp = await chrome.runtime.sendMessage({ type: 'registerSite', domain });
+      if (resp && resp.ok) {
+        pending = pending.filter(d => d !== domain);
+        await persistPending();
+        if (!whitelist.includes(domain)) { whitelist.push(domain); await persistWhitelist(); }
+        renderSites();
+        renderPending();
+      } else {
+        try { await chrome.permissions.remove({ origins: originPatternsForDomain(domain) }); } catch (err) { /* ignore */ }
+        alert('Impossible d\'activer la protection sur ce domaine.');
+      }
     });
   }
 
@@ -342,11 +433,11 @@
     downloadFile('pseudoshield-correspondance.csv', csv, 'text/csv');
   });
 
-  // Echappement HTML pour prévenir les injections XSS
+  // Echappement HTML pour prévenir les injections XSS (guillemets inclus, pour usage en attribut)
   function escapeHtml(text) {
     const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+    div.textContent = String(text);
+    return div.innerHTML.replace(/"/g, '&quot;');
   }
 
   // Initialisation

@@ -14,7 +14,7 @@
       <div class="options-title">
         <img src="icons/icon-48.png" alt="" class="options-icon">
         <h1>PseudoShield</h1>
-        <span class="version-badge">v2.0.0</span>
+        <span class="version-badge">v2.1.0</span>
       </div>
     </header>
 
@@ -91,17 +91,11 @@
     <section id="tab-sites" class="tab-panel">
       <div class="panel-header">
         <h2 class="panel-title">Sites surveillés</h2>
-        <p class="panel-description">Gérez les domaines sur lesquels la pseudonymisation est active.</p>
+        <p class="panel-description">Plateformes sur lesquelles la pseudonymisation est active. Ajoutez vos propres domaines (IA interne, LibreChat, Open WebUI…) : votre navigateur vous demandera l'autorisation pour chaque domaine.</p>
       </div>
-      <div class="site-toggle-section">
-        <label class="toggle-switch">
-          <input type="checkbox" id="all-sites-toggle">
-          <span class="toggle-slider"></span>
-        </label>
-        <span class="site-toggle-label">Actif sur tous les sites</span>
-      </div>
+      <div id="sites-pending" class="sites-pending"></div>
       <div class="site-add-section">
-        <input type="text" id="add-site-input" class="input-field" placeholder="exemple.com">
+        <input type="text" id="add-site-input" class="input-field" placeholder="ia.mon-organisation.be">
         <button class="btn btn-secondary" id="add-site-btn">+ Ajouter</button>
       </div>
       <div id="sites-list" class="sites-list"></div>
@@ -156,7 +150,7 @@
 
     <!-- Footer -->
     <footer class="options-footer">
-      PseudoShield v2.0.0 · <a href="https://lawgitech.eu" target="_blank" rel="noopener">lawgitech.eu</a> · <a href="https://maitrejv.github.io/pseudoshield/privacy.html" target="_blank" rel="noopener">Politique de confidentialite</a>
+      PseudoShield v2.1.0 · <a href="https://lawgitech.eu" target="_blank" rel="noopener">lawgitech.eu</a> · <a href="https://maitrejv.github.io/pseudoshield/privacy.html" target="_blank" rel="noopener">Politique de confidentialite</a>
     </footer>
 
   </div>

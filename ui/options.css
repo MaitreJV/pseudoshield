@@ -520,21 +520,6 @@ input[type="date"] {
 }
 
 /* --- Sites section --- */
-.site-toggle-section {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.04);
-  border-radius: 8px;
-  margin-bottom: 16px;
-}
-
-.site-toggle-label {
-  font-weight: 600;
-  font-size: 14px;
-}
-
 .site-add-section {
   display: flex;
   gap: 10px;
@@ -576,6 +561,49 @@ input[type="date"] {
   color: rgba(255, 255, 255, 0.3);
   font-style: italic;
   padding: 20px;
+}
+
+/* Tag "par defaut" / "ajoute" + bouton d'action pousse a droite */
+.site-tag {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.45);
+  margin-left: 8px;
+}
+
+.site-tag-custom {
+  background: rgba(0, 184, 148, 0.15);
+  color: #00b894;
+}
+
+.site-item .btn-remove,
+.site-item .btn-authorize {
+  margin-left: auto;
+}
+
+/* Banniere "en attente d'autorisation" (sites custom sans permission accordee) */
+.sites-pending {
+  margin-bottom: 12px;
+}
+
+.sites-pending-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #f0b429;
+  margin-bottom: 6px;
+}
+
+.site-item-pending {
+  border-color: rgba(240, 180, 41, 0.3);
+  background: rgba(240, 180, 41, 0.08);
+  margin-bottom: 4px;
+}
+
+.btn-authorize {
+  padding: 4px 12px;
+  font-size: 11px;
 }
 
 .btn-remove {
