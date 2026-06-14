@@ -167,12 +167,8 @@
     "message": "Ajouter un site",
     "description": "Bouton pour ajouter un site a la liste"
   },
-  "allSites": {
-    "message": "Tous les sites",
-    "description": "Option pour appliquer la pseudonymisation sur tous les sites"
-  },
   "version": {
-    "message": "v2.0.0",
+    "message": "v2.1.0",
     "description": "Version actuelle de l'extension"
   },
   "credits": {

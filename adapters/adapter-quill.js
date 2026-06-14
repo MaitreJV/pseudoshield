@@ -53,7 +53,7 @@
   window.PseudoShield.AdapterRegistry.register({
     name: 'Perplexity',
     selector: 'textarea, div[contenteditable="true"]',
-    detect: function() { return location.hostname === 'perplexity.ai'; },
+    detect: function() { return location.hostname === 'perplexity.ai' || location.hostname.endsWith('.perplexity.ai'); },
     insert: insertViaInputEvent
   });
 })();

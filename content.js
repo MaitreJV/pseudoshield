@@ -3,17 +3,22 @@
 (function() {
   'use strict';
 
+  // Garde d'idempotence : empeche le double-attachement du listener paste si le
+  // bundle est injecte plusieurs fois (content script statique + dynamique, ou
+  // re-injection via scripting.executeScript dans un onglet deja couvert).
+  if (!window.PseudoShield) window.PseudoShield = {};
+  if (window.PseudoShield.__contentLoaded) return;
+  window.PseudoShield.__contentLoaded = true;
+
   console.log('[PseudoShield] Content script chargé sur', location.hostname);
 
   let isEnabled = true;
 
   async function checkEnabled() {
     try {
-      const result = await chrome.storage.local.get(['pseudoshield_enabled', 'pseudoshield_whitelist', 'pseudoshield_allSites']);
+      const result = await chrome.storage.local.get(['pseudoshield_enabled', 'pseudoshield_whitelist']);
 
       if (result.pseudoshield_enabled === false) return false;
-
-      if (result.pseudoshield_allSites === true) return true;
 
       const whitelist = result.pseudoshield_whitelist || [
         'claude.ai',
