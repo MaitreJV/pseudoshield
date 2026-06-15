@@ -17,6 +17,21 @@
   // Flag d'initialisation
   let initialized = false;
 
+  // Sel par-installation (Art. 32 RGPD) : neutralise les tables de correspondance
+  // pre-calculees contre les hash a faible entropie (NISS, IBAN, dates...). Stable
+  // par installation -> le determinisme des pseudonymes est preserve entre sessions.
+  let salt = '';
+
+  /**
+   * Génère un sel aléatoire (128 bits) en hexadécimal via Web Crypto.
+   * @returns {string}
+   */
+  function generateSalt() {
+    const bytes = new Uint8Array(16);
+    crypto.getRandomValues(bytes);
+    return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
   /**
    * Initialise le moteur en chargeant la table persistée depuis chrome.storage.local
    * @returns {Promise<void>}
@@ -25,9 +40,25 @@
     if (initialized) return;
 
     try {
-      const result = await chrome.storage.local.get(['pseudoshield_table', 'pseudoshield_counters']);
-      persistedTable = result.pseudoshield_table || {};
-      counters = result.pseudoshield_counters || {};
+      const result = await chrome.storage.local.get(['pseudoshield_table', 'pseudoshield_counters', 'pseudoshield_salt']);
+      salt = result.pseudoshield_salt || '';
+
+      if (!salt) {
+        // Première initialisation avec le schéma salé : on génère le sel et on repart
+        // d'une table VIERGE (les anciens hash non salés deviennent caducs — reset assumé).
+        salt = generateSalt();
+        persistedTable = {};
+        counters = {};
+        await chrome.storage.local.set({
+          pseudoshield_salt: salt,
+          pseudoshield_table: {},
+          pseudoshield_counters: {}
+        });
+        console.log('[PseudoShield] Sel par-installation généré, table réinitialisée');
+      } else {
+        persistedTable = result.pseudoshield_table || {};
+        counters = result.pseudoshield_counters || {};
+      }
       initialized = true;
       console.log('[PseudoShield] Moteur de pseudonymisation initialisé,', Object.keys(persistedTable).length, 'entrées chargées');
     } catch (e) {
@@ -49,7 +80,10 @@
   async function getPseudonym(original, prefix, category, rgpdCategory) {
     await init();
 
-    const hash = await window.PseudoShield.Hash.sha256(original.trim().toLowerCase());
+    // Hash salé : SHA-256(sel + ':' + valeur normalisée). Le sel par-installation est
+    // charge par init() (appele juste au-dessus), ce qui rend les hash non reproductibles
+    // d'une installation a l'autre et casse les tables de correspondance pre-calculees.
+    const hash = await window.PseudoShield.Hash.sha256(salt + ':' + original.trim().toLowerCase());
 
     // Vérifier si déjà connu
     if (persistedTable[hash]) {
