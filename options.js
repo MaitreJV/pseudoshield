@@ -29,6 +29,21 @@
     return STATIC_DOMAINS.some(s => domain === s || domain.endsWith('.' + s));
   }
 
+  // Normalise l'entree utilisateur en nom de domaine : accepte aussi une URL complete
+  // collee (ex. https://app.exemple.be/chemin) et en extrait le hostname.
+  function normalizeDomain(raw) {
+    var v = (raw || '').trim().toLowerCase();
+    if (!v) return '';
+    if (v.indexOf('://') !== -1 || v.indexOf('/') !== -1) {
+      try {
+        v = new URL(v.indexOf('://') !== -1 ? v : 'https://' + v).hostname;
+      } catch (e) {
+        v = v.replace(/^[a-z]+:\/\//, '').split('/')[0];
+      }
+    }
+    return v.split(':')[0]; // retirer un eventuel port
+  }
+
   // Navigation par onglets
   function initTabs() {
     const tabs = document.querySelectorAll('.tab-btn');
@@ -268,7 +283,7 @@
 
     // Ajout d'un domaine
     document.getElementById('add-site-btn').addEventListener('click', async () => {
-      const domain = input.value.trim().toLowerCase();
+      const domain = normalizeDomain(input.value);
       if (!domain) return;
 
       if (!DOMAIN_REGEX.test(domain)) {
@@ -309,8 +324,9 @@
         renderSites();
       } else {
         // Echec d'enregistrement : retirer la permission obtenue pour ne pas la laisser orpheline.
+        console.error('[PseudoShield] registerSite refuse pour', domain, ':', resp);
         try { await chrome.permissions.remove({ origins: originPatternsForDomain(domain) }); } catch (err) { /* ignore */ }
-        alert('Impossible d\'activer la protection sur ce domaine.');
+        alert('Impossible d\'activer la protection sur ce domaine' + (resp && resp.error ? ' (' + resp.error + ').' : '.'));
       }
     });
 
@@ -337,8 +353,9 @@
         renderSites();
         renderPending();
       } else {
+        console.error('[PseudoShield] registerSite (pending) refuse pour', domain, ':', resp);
         try { await chrome.permissions.remove({ origins: originPatternsForDomain(domain) }); } catch (err) { /* ignore */ }
-        alert('Impossible d\'activer la protection sur ce domaine.');
+        alert('Impossible d\'activer la protection sur ce domaine' + (resp && resp.error ? ' (' + resp.error + ').' : '.'));
       }
     });
   }

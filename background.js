@@ -191,8 +191,12 @@
   }
 
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    // Validation sender : toggle et resetSession ne doivent venir que des pages extension
-    const isExtensionPage = !sender.tab;
+    // Validation sender : un message de confiance vient d'une PAGE de l'extension
+    // (popup ou options), identifiee par son URL chrome-extension://<id>/...
+    // NB: la page options ouverte dans un onglet a un sender.tab DEFINI -> l'ancien
+    // test "!sender.tab" la rejetait a tort (cause du "Non autorise" sur registerSite).
+    const isExtensionPage = typeof sender.url === 'string' &&
+      sender.url.startsWith('chrome-extension://' + chrome.runtime.id + '/');
 
     switch (message.type) {
       case 'pseudonymization_done':
