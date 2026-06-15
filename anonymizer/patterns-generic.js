@@ -232,7 +232,8 @@
       rgpdCategory: 'art4',
       confidence: 'low',
       regex: new RegExp(
-        '(?<=[\\n,;:(]\\s*|[a-zà-ÿ]\\s)' +
+        // ^ inclus : capte aussi un nom au tout debut du texte colle (1re ligne)
+        '(?<=^|[\\n,;:(]\\s*|[a-zà-ÿ]\\s)' +
         '[A-ZÀ-Ÿ][a-zà-ÿ]{2,}(?:-[A-ZÀ-Ÿ][a-zà-ÿ]+)?' +
         '\\s+' +
         '(?:' + PARTICULES + '\\s+)?' +
@@ -255,9 +256,12 @@
         if (words.some(function(w) { return w.length > 15; })) return null;
 
         // 3. Boost si le premier mot est un prénom connu → low → medium
+        //    Gere les prenoms composes : "Jean-Pierre" -> "jean" / "pierre"
         if (names && words.length > 0) {
-          var firstName = words[0].toLowerCase();
-          if (names.has(firstName)) return 'medium';
+          var firstWord = words[0].toLowerCase();
+          if (names.has(firstWord) || firstWord.split('-').some(function(p) { return names.has(p); })) {
+            return 'medium';
+          }
         }
 
         return 'low';
